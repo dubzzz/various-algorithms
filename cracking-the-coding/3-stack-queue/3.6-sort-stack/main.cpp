@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include <rapidcheck/gtest.h>
 
+#include <algorithm>
 #include <stack>
 #include <vector>
 
@@ -257,6 +258,17 @@ TEST(Ascending, WithNullOrNegative)
   std::stack<int> st = make_stack<int>({-10,-100,0,9,-3});
   sort_stack(st);
   test_stack({-100,-10,-3,0,9}, st);
+}
+
+RC_GTEST_PROP(Ascending, PropertyBasedTesting, (const std::vector<int>& _data))
+{
+  std::vector<int> data = _data;
+  
+  std::stack<int> st = make_stack<int>(data);
+  sort_stack(st);
+  std::sort(data.begin(), data.end());
+  test_stack(data, st);
+
 }
 
 int main(int argc, char **argv)

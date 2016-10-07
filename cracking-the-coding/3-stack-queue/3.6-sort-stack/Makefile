@@ -1,5 +1,5 @@
 CFLAGS=-std=c++11 -Wall -I. -I/usr/local/include -I../../../rapidcheck/include -I../../../rapidcheck/extras/gtest/include
-LDFLAGS=-L/usr/local/lib -lgtest -pthread -L../../../rapidcheck/librapidcheck.a
+LDFLAGS=-L/usr/local/lib -lgtest -pthread ../../../rapidcheck/librapidcheck.a
 
 a_quick.out: main.cpp
 	g++ -o a_quick.out main.cpp -DQUICK $(CFLAGS) $(LDFLAGS)
