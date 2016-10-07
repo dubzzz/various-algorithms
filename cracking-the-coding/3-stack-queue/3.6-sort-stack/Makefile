@@ -13,7 +13,9 @@ clean:
 	rm -f a_merge.out
 	rm -f a_selection.out
 
-test: a_quick.out a_merge.out a_selection.out
+build: a_quick.out a_merge.out a_selection.out
+
+test: build
 	chmod u+x a_quick.out
 	./a_quick.out
 	chmod u+x a_merge.out
