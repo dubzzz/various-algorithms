@@ -260,7 +260,7 @@ TEST(Ascending, WithNullOrNegative)
   test_stack({-100,-10,-3,0,9}, st);
 }
 
-RC_GTEST_PROP(Ascending, PropertyBasedTesting, (const std::vector<int>& _data))
+RC_GTEST_PROP(Ascending, RandomData, (const std::vector<int>& _data))
 {
   std::vector<int> data = _data;
   
