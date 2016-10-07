@@ -1,4 +1,6 @@
 #include "gtest/gtest.h"
+#include <rapidcheck/gtest.h>
+
 #include <stack>
 #include <vector>
 
