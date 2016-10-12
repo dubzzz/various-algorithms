@@ -50,41 +50,43 @@ bool all_unique_nostruct(std::string const& in)
 
 inline bool all_unique(std::string const& in)
 {
-#ifdef NO_STRUCT
+#ifdef NOSTRUCT
+  #define ALGO AllUnique_NOSTRUCT
   return all_unique_nostruct(in);
 #else
+  #define ALGO AllUnique_DEFAULT
   return all_unique_struct(in);
 #endif
 }
 
 // Running tests
 
-TEST(AllUnique, EmptyString)
+TEST(ALGO, EmptyString)
 {
   ASSERT_TRUE(all_unique(""));
 }
 
-TEST(AllUnique, OneCharacter)
+TEST(ALGO, OneCharacter)
 {
   ASSERT_TRUE(all_unique("a"));
 }
 
-TEST(AllUnique, DistinctCharacters)
+TEST(ALGO, DistinctCharacters)
 {
   ASSERT_TRUE(all_unique("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"));
 }
 
-TEST(AllUnique, TwoIdenticalCharacters)
+TEST(ALGO, TwoIdenticalCharacters)
 {
   ASSERT_FALSE(all_unique("AabcdefghijklmnopqrstuvAwxyz"));
 }
 
-TEST(AllUnique, TwoIdenticalCharactersInRow)
+TEST(ALGO, TwoIdenticalCharactersInRow)
 {
   ASSERT_FALSE(all_unique("AAabcdefghijklmnopqrstuvwxyz"));
 }
 
-RC_GTEST_PROP(AllUnique, RandomData, (const std::string& _data))
+RC_GTEST_PROP(ALGO, RandomData, (const std::string& _data))
 {
   std::string data = _data;
   std::sort(data.begin(), data.end());
@@ -92,7 +94,7 @@ RC_GTEST_PROP(AllUnique, RandomData, (const std::string& _data))
   RC_ASSERT(all_unique(_data) == unique);
 }
 
-RC_GTEST_PROP(AllUnique, RandomDataWithDuplicate, (const std::string& _data))
+RC_GTEST_PROP(ALGO, RandomDataWithDuplicate, (const std::string& _data))
 {
   std::string data = _data;
   if (_data.size() == 0)
