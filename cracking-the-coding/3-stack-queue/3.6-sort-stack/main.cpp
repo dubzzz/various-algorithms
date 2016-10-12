@@ -202,11 +202,14 @@ void selection_sort_stack(std::stack<T>& st)
 template <class T>
 inline void sort_stack(std::stack<T>& st)
 {
-#ifdef QUICK
+#ifdef QUICKSORT
+  #define ALGO SortStack_QUICKSORT
   return quick_sort_stack(st);
-#elif MERGE
+#elif MERGESORT
+  #define ALGO SortStack_MERGESORT
   return merge_sort_stack(st);
 #else
+  #define ALGO SortStack_SELECTION
   return selection_sort_stack(st);
 #endif
 }
@@ -218,49 +221,49 @@ template <class T> std::stack<T> make_stack(std::vector<T> const& elts);
 
 // Running tests
 
-TEST(Ascending, AlreadySorted)
+TEST(ALGO, AlreadySorted)
 {
   std::stack<int> st = make_stack<int>({3,2,1});
   sort_stack(st);
   test_stack({1,2,3}, st);
 }
 
-TEST(Ascending, ReverseSorted)
+TEST(ALGO, ReverseSorted)
 {
   std::stack<int> st = make_stack<int>({1,2,3});
   sort_stack(st);
   test_stack({1,2,3}, st);
 }
 
-TEST(Ascending, EmptyStack)
+TEST(ALGO, EmptyStack)
 {
   std::stack<int> st = make_stack<int>({});
   sort_stack(st);
   test_stack({}, st);
 }
 
-TEST(Ascending, DifferentElements)
+TEST(ALGO, DifferentElements)
 {
   std::stack<int> st = make_stack<int>({10,23,8,93,55,105});
   sort_stack(st);
   test_stack({8,10,23,55,93,105}, st);
 }
 
-TEST(Ascending, WithDuplicates)
+TEST(ALGO, WithDuplicates)
 {
   std::stack<int> st = make_stack<int>({1,1,4,1,2,2,3});
   sort_stack(st);
   test_stack({1,1,1,2,2,3,4}, st);
 }
 
-TEST(Ascending, WithNullOrNegative)
+TEST(ALGO, WithNullOrNegative)
 {
   std::stack<int> st = make_stack<int>({-10,-100,0,9,-3});
   sort_stack(st);
   test_stack({-100,-10,-3,0,9}, st);
 }
 
-RC_GTEST_PROP(Ascending, RandomData, (const std::vector<int>& _data))
+RC_GTEST_PROP(ALGO, RandomData, (const std::vector<int>& _data))
 {
   std::vector<int> data = _data;
   
