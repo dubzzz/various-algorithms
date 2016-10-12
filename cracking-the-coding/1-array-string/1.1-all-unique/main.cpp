@@ -23,9 +23,32 @@ bool all_unique_struct(std::string const& in)
   return true;
 }
 
+// Without ADDITIONAL DATA STRUCTURE
+
+bool all_unique_nostruct(std::string const& in)
+{
+  unsigned char unicity_checker[32] = { 0 }; //8 bits x 32 = 256bits
+  for (auto c : in)
+  {
+    const unsigned char cc = *reinterpret_cast<unsigned char*>(&c);
+    const unsigned int idx = static_cast<unsigned int>(cc) >> 3;
+    const unsigned char mask = 1 << (static_cast<unsigned int>(cc) & 0b0111);
+    if (unicity_checker[idx] & mask)
+    {
+      return false;
+    }
+    unicity_checker[idx] |= mask;
+  }
+  return true;
+}
+
 inline bool all_unique(std::string const& in)
 {
+#ifdef NO_STRUCT
+  return all_unique_nostruct(in);
+#else
   return all_unique_struct(in);
+#endif
 }
 
 // Running tests
