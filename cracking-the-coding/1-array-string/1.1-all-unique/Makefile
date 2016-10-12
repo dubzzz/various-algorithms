@@ -11,9 +11,13 @@ a_DEFAULT.out: main.cpp
 	$(MAKE) rebuild
 
 build_missing:
+	ERROR=0 ; \
 	for algo in $(ALGORITHMS); do \
-		(test -f a_$$algo.out && echo -e ":: $(COLOR)Up-to-date $$algo$(CLEAR_COLOR)") || (echo -e ":: $(COLOR)Building $$algo$(CLEAR_COLOR)" && g++ -o a_$$algo.out main.cpp -D$$algo $(CFLAGS) $(LDFLAGS)) ; \
-	done
+		(test -f a_$$algo.out && echo -e ":: $(COLOR)Up-to-date $$algo$(CLEAR_COLOR)") || (echo -e ":: $(COLOR)Building $$algo$(CLEAR_COLOR)" && (g++ -o a_$$algo.out main.cpp -D$$algo $(CFLAGS) $(LDFLAGS) || ERROR=1)) ; \
+	done ; \
+	if [ "$$ERROR" -ne "0" ]; then \
+		exit 101 ; \
+	fi
 
 clean:
 	for algo in $(ALGORITHMS); do \
@@ -24,9 +28,13 @@ clean:
 rebuild: clean build_missing
 
 test: build
+	ERROR=0 ; \
 	for algo in $(ALGORITHMS); do \
 		echo -e ":: $(COLOR)Testing $$algo$(CLEAR_COLOR)" ; \
 		chmod u+x a_$$algo.out ; \
-		./a_$$algo.out ; \
-	done
+		./a_$$algo.out || ERROR=1 ; \
+		done ; \
+	if [ "$$ERROR" -ne "0" ]; then \
+		exit 102 ; \
+	fi
 
