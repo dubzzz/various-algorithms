@@ -21,5 +21,6 @@ configure:
 		maindir=$$(echo "$$mainfile" | rev | cut -d/ -f 2- | rev) ; \
 		rapidcheck_relpath=$$(echo "$$mainfile" | rev | cut -d/ -f 2- | rev | sed 's/[^\/]\+/\\\.\\\./g' | cut -d/ -f 2- | sed 's/\//\\\//g') ; \
 		cat Makefile.project | sed "s/RAPIDCHECK_PATH/$$rapidcheck_relpath\/rapidcheck/g" > "$$maindir/Makefile" ; \
+		test -f "$$maindir/algos.txt" || (echo "DEFAULT" > "$$maindir/algos.txt") ; \
 	done
 
