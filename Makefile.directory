@@ -1,5 +1,5 @@
 build:
-	ERROR=0 ; \
+	@ERROR=0 ; \
 	for directory in `find . -maxdepth 1 -type d ! -path '*/rapidcheck*' ! -path '*/.*' ! -path '.'` ; do \
 		cd $$directory && ($(MAKE) build || ERROR=1) ; \
 		cd .. ; \
@@ -9,7 +9,7 @@ build:
 	fi
 
 rebuild:
-	ERROR=0 ; \
+	@ERROR=0 ; \
 	for directory in `find . -maxdepth 1 -type d ! -path '*/rapidcheck*' ! -path '*/.*' ! -path '.'` ; do \
 		cd $$directory && ($(MAKE) rebuild || ERROR=1) ; \
 		cd .. ; \
@@ -19,7 +19,7 @@ rebuild:
 	fi
 
 build_missing:
-	ERROR=0 ; \
+	@ERROR=0 ; \
 	for directory in `find . -maxdepth 1 -type d ! -path '*/rapidcheck*' ! -path '*/.*' ! -path '.'` ; do \
 		cd $$directory && ($(MAKE) build_missing || ERROR=1) ; \
 		cd .. ; \
@@ -29,7 +29,7 @@ build_missing:
 	fi
 
 clean:
-	ERROR=0 ; \
+	@ERROR=0 ; \
 	for directory in `find . -maxdepth 1 -type d ! -path '*/rapidcheck*' ! -path '*/.*' ! -path '.'` ; do \
 		cd $$directory && ($(MAKE) clean || ERROR=1) ; \
 		cd .. ; \
@@ -39,7 +39,7 @@ clean:
 	fi
 
 test:
-	ERROR=0 ; \
+	@ERROR=0 ; \
 	for directory in `find . -maxdepth 1 -type d ! -path '*/rapidcheck*' ! -path '*/.*' ! -path '.'` ; do \
 		cd $$directory && ($(MAKE) test || ERROR=1) ; \
 		cd .. ; \
