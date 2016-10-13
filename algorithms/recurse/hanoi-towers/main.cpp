@@ -52,7 +52,7 @@ public:
   {
     ASSERT_TRUE(towers[0].empty());
     ASSERT_TRUE(towers[1].empty());
-    ASSERT_FALSE(towers[2].empty()); //by implementation it contains all the disks
+    //by implementation towers[2] contains all the disks (maybe zero if empty hanoi)
   }
 };
 
@@ -96,10 +96,6 @@ void hanoi_recurse_helper(HanoiTower& tower, std::size_t from, std::size_t other
   {
     return;
   }
-  else if (num_to_move == 1)
-  {
-    tower.move(to, from);
-  }
   else
   {
     hanoi_recurse_helper(tower, from, to, other, num_to_move -1);
@@ -125,6 +121,13 @@ inline void hanoi(HanoiTower& tower)
 }
 
 // Running tests
+
+TEST(ALGO, NoTower)
+{
+  HanoiTower tower(0);
+  hanoi(tower);
+  tower.assert_done();
+}
 
 TEST(ALGO, OneDisk)
 {
