@@ -1,4 +1,5 @@
 #include "gtest/gtest.h"
+#include <rapidcheck/gtest.h>
 
 #include <algorithm>
 #include <iterator>
@@ -66,6 +67,20 @@ TEST(ALGO, ConsecutiveSpaces)
 TEST(ALGO, StartsAndEndsBySpaces)
 {
   ASSERT_EQ("&nbsp;&nbsp;&nbsp;Let's&nbsp;Try&nbsp;It!&nbsp;&nbsp;", replace_spaces("   Let's Try It!  "));
+}
+
+RC_GTEST_PROP(ALGO, RandomData, (const std::string& test))
+{
+  std::string expected;
+
+  std::size_t token_start = 0;
+  for (std::size_t token_end = test.find(" ") ; token_end != std::string::npos ; token_start = token_end +1, token_end = test.find(" ", token_start))
+  {
+    expected += test.substr(token_start, token_end-token_start) + "&nbsp;";
+  }
+  expected += test.substr(token_start);
+  
+  RC_ASSERT(replace_spaces(test) == expected);
 }
 
 int main(int argc, char **argv)
