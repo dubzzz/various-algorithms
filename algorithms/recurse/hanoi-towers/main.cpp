@@ -57,8 +57,6 @@ public:
 
 // Algorithm to be tested
 
-// In-place
-
 void hanoi_recurse(HanoiTower& tower)
 {
 }
