@@ -1,10 +1,21 @@
 #include "gtest/gtest.h"
+#include <rapidcheck/gtest.h>
 
 #include <stack>
 #include <tuple>
 
 // HanoiTower objects
 
+struct GAssert
+{
+  static inline bool expect(bool condition) { EXPECT_TRUE(condition); return condition; };
+};
+struct RcAssert
+{
+  static inline bool expect(bool condition) { RC_ASSERT(condition); return condition; };
+};
+
+template <class AssertSystem = GAssert>
 class HanoiTower
 {
   std::stack<unsigned int> towers[3];
@@ -26,7 +37,7 @@ public:
 
   std::size_t height_of(const std::size_t tower_id) const
   {
-    EXPECT_TRUE(tower_id < 3);
+    if (! AssertSystem::expect(tower_id < 3)) return std::size_t();
     return towers[tower_id].size();
   }
 
@@ -38,11 +49,11 @@ public:
 
   void move(const std::size_t dest, const std::size_t from)
   {
-    ASSERT_TRUE(dest < 3);
-    ASSERT_TRUE(from < 3);
-    ASSERT_TRUE(dest != from);
-    ASSERT_FALSE(towers[from].empty());
-    ASSERT_TRUE(towers[dest].empty() || towers[dest].top() > towers[from].top());
+    if (! AssertSystem::expect(dest < 3)) return;
+    if (! AssertSystem::expect(from < 3)) return;
+    if (! AssertSystem::expect(dest != from)) return;
+    if (! AssertSystem::expect(! towers[from].empty())) return;
+    if (! AssertSystem::expect(towers[dest].empty() || towers[dest].top() > towers[from].top())) return;
 
     towers[dest].push(towers[from].top());
     towers[from].pop();
@@ -50,15 +61,16 @@ public:
 
   void assert_done()
   {
-    ASSERT_TRUE(towers[0].empty());
-    ASSERT_TRUE(towers[1].empty());
+    if (! AssertSystem::expect(towers[0].empty())) return;
+    if (! AssertSystem::expect(towers[1].empty())) return;
     //by implementation towers[2] contains all the disks (maybe zero if empty hanoi)
   }
 };
 
 // Algorithm to be tested
 
-void hanoi_iterative(HanoiTower& tower)
+template <class T>
+void hanoi_iterative(HanoiTower<T>& tower)
 {
   if (tower.height_of(0) == 0)
   {
@@ -90,7 +102,8 @@ void hanoi_iterative(HanoiTower& tower)
   }
 }
 
-void hanoi_recurse_helper(HanoiTower& tower, std::size_t from, std::size_t other, std::size_t to, std::size_t num_to_move)
+template <class T>
+void hanoi_recurse_helper(HanoiTower<T>& tower, std::size_t from, std::size_t other, std::size_t to, std::size_t num_to_move)
 {
   if (num_to_move == 0)
   {
@@ -104,12 +117,14 @@ void hanoi_recurse_helper(HanoiTower& tower, std::size_t from, std::size_t other
   }
 }
 
-void hanoi_recurse(HanoiTower& tower)
+template <class T>
+void hanoi_recurse(HanoiTower<T>& tower)
 {
   hanoi_recurse_helper(tower, 0, 1, 2, tower.height_of(0));
 }
 
-inline void hanoi(HanoiTower& tower)
+template <class T>
+inline void hanoi(HanoiTower<T>& tower)
 {
 #ifdef ITERATIVE
   #define ALGO HanoiTowers_ITERATIVE
@@ -124,28 +139,36 @@ inline void hanoi(HanoiTower& tower)
 
 TEST(ALGO, NoTower)
 {
-  HanoiTower tower(0);
+  HanoiTower<GAssert> tower(0);
   hanoi(tower);
   tower.assert_done();
 }
 
 TEST(ALGO, OneDisk)
 {
-  HanoiTower tower(1);
+  HanoiTower<GAssert> tower(1);
   hanoi(tower);
   tower.assert_done();
 }
 
 TEST(ALGO, TwoDisks)
 {
-  HanoiTower tower(2);
+  HanoiTower<GAssert> tower(2);
   hanoi(tower);
   tower.assert_done();
 }
 
 TEST(ALGO, FiveDisks)
 {
-  HanoiTower tower(5);
+  HanoiTower<GAssert> tower(5);
+  hanoi(tower);
+  tower.assert_done();
+}
+
+RC_GTEST_PROP(ALGO, RandomNumberOfDisks, ())
+{
+  unsigned short height = *rc::gen::inRange(0, 20);
+  HanoiTower<RcAssert> tower(height);
   hanoi(tower);
   tower.assert_done();
 }
