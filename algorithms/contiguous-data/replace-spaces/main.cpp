@@ -8,6 +8,37 @@
 
 // Algorithm to be tested
 
+// In-place
+
+void replace_spaces_inplace(std::string& in)
+{
+  // Replace all spaces of std::string <in> using only <in>
+  // and being able to resize it if required
+
+  const std::string replace_by = "&nbsp;";
+  
+  std::size_t previous_size { in.size() };
+  std::size_t expected_size { in.size() + (replace_by.size() -1) * std::count(in.begin(), in.end(), ' ') };
+  in.resize(expected_size);
+
+  for (std::size_t pos = previous_size, current = expected_size ; pos > 0 ; --pos)
+  {
+    if (in[pos-1] == ' ')
+    {
+      for (auto rit = replace_by.rbegin() ; rit != replace_by.rend() ; ++rit)
+      {
+        in[--current] = *rit;
+      }
+    }
+    else
+    {
+      in[--current] = in[pos-1];
+    }
+  }
+}
+
+// STL
+
 template <char delimiter> struct DelimitedString : std::string {};
 template <char delimiter> std::istream& operator>>(std::istream& stream, DelimitedString<delimiter>& s)
 {
@@ -28,8 +59,15 @@ std::string replace_spaces_using_stl(std::string const& in)
 
 inline std::string replace_spaces(std::string const& in)
 {
+#ifdef INPLACE
+  #define ALGO ReplaceSpaces_INPLACE
+  std::string copy { in };
+  replace_spaces_inplace(copy);
+  return copy;
+#else
   #define ALGO ReplaceSpaces_STL
   return replace_spaces_using_stl(in);
+#endif
 }
 
 // Running tests
