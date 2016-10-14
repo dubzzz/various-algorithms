@@ -2,6 +2,7 @@
 #include <rapidcheck/gtest.h>
 
 #include <algorithm>
+#include <stdexcept>
 #include <stack>
 #include <tuple>
 
@@ -9,17 +10,28 @@
 
 struct GAssert
 {
-  static inline bool expect(bool condition) { EXPECT_TRUE(condition); return condition; };
+  static inline ::testing::AssertionResult apply(const char*, const char*, bool condition, std::string const& msg)
+  {
+    if (condition) { return ::testing::AssertionSuccess(); }
+    else { return ::testing::AssertionFailure() << msg; }
+  }
+  static inline bool expect(bool condition, std::string const& msg) { EXPECT_PRED_FORMAT2(apply, condition, msg.c_str()); return condition; };
 };
 struct RcAssert
 {
-  static inline bool expect(bool condition) { RC_ASSERT(condition); return condition; };
+  static inline bool expect(bool condition, std::string const& msg) { RC_ASSERT(condition); return condition; };
+};
+struct too_many_iterations : std::length_error
+{
+  too_many_iterations(const char* s) : std::length_error(s) {}
+  too_many_iterations(std::string const& s) : std::length_error(s) {}
 };
 
 template <class AssertSystem = GAssert>
 class HanoiTower
 {
   std::stack<unsigned int> towers[3];
+  unsigned long long remaining_moves_allowed;
 
 public:
   HanoiTower() = delete;
@@ -28,7 +40,9 @@ public:
   HanoiTower& operator=(HanoiTower const&) = delete;
   HanoiTower& operator=(HanoiTower&&) = delete;
 
-  HanoiTower(const unsigned short height) : towers()
+  HanoiTower(const unsigned short height)//max height allowed: 64
+      : towers()
+      , remaining_moves_allowed((1 << height) -1) // there is a solution having 2^height -1 moves
   {
     for (unsigned short i = 0 ; i != height ; ++i)
     {
@@ -38,23 +52,24 @@ public:
 
   std::size_t height_of(const std::size_t tower_id) const
   {
-    if (! AssertSystem::expect(tower_id < 3)) return std::size_t();
+    if (! AssertSystem::expect(tower_id < 3, "Tower id must be in the range 0-2")) return std::size_t();
     return towers[tower_id].size();
   }
 
   unsigned int head_of(const std::size_t tower_id) const
   {
-    EXPECT_TRUE(tower_id < 3);
+    if (! AssertSystem::expect(tower_id < 2, "Tower id must be in the range 0-2")) return 0;
     return towers[tower_id].top();
   }
 
   void move(const std::size_t dest, const std::size_t from)
   {
-    if (! AssertSystem::expect(dest < 3)) return;
-    if (! AssertSystem::expect(from < 3)) return;
-    if (! AssertSystem::expect(dest != from)) return;
-    if (! AssertSystem::expect(! towers[from].empty())) return;
-    if (! AssertSystem::expect(towers[dest].empty() || towers[dest].top() > towers[from].top())) return;
+    if (! AssertSystem::expect(dest < 3, "Destination id must be in the range 0-2")) return;
+    if (! AssertSystem::expect(from < 3, "Source id must be in the range 0-2")) return;
+    if (! AssertSystem::expect(dest != from, "Unable to move to itself, destination must be different from source")) return;
+    if (! AssertSystem::expect(! towers[from].empty(), "No disk in the source")) return;
+    if (! AssertSystem::expect(towers[dest].empty() || towers[dest].top() > towers[from].top(), "Disk is too large to be inserted on the top of destination")) return;
+    if (! AssertSystem::expect(remaining_moves_allowed-- != 0, "Too many iterations to solve this Hanoi Tower problem")) throw too_many_iterations("Too many iterations to solve this Hanoi Tower problem");
 
     towers[dest].push(towers[from].top());
     towers[from].pop();
@@ -62,8 +77,8 @@ public:
 
   void assert_done()
   {
-    if (! AssertSystem::expect(towers[0].empty())) return;
-    if (! AssertSystem::expect(towers[1].empty())) return;
+    if (! AssertSystem::expect(towers[0].empty(), "Problem not solved tower #0 still has disks")) return;
+    if (! AssertSystem::expect(towers[1].empty(), "Problem not solved tower #1 still has disks")) return;
     //by implementation towers[2] contains all the disks (maybe zero if empty hanoi)
   }
 };
@@ -95,7 +110,7 @@ void hanoi_iterative_no_stack(HanoiTower<T>& tower)
   
   const unsigned int height = tower.height_of(0);
   std::vector<std::pair<std::size_t, std::size_t>> moves;
-  moves.reserve((2 << height) -1); // Solution contains 2 ^ height -1 moves at the end of the execution
+  moves.reserve((1 << height) -1); // Solution contains 2 ^ height -1 moves at the end of the execution
   
   for (unsigned int i = 1 ; i != height+1 ; ++i)
   {
