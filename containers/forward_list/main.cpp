@@ -55,9 +55,13 @@ public:
     std::for_each(h.rbegin(), h.rend(), [this](T const& item) {this->push_front(std::move(item));});
     return *this;
   }
-  ~forward_list()
+  void clear()
   {
     while(head) { head = head->del(); }
+  }
+  ~forward_list()
+  {
+    clear();
   }
   void push_front(T&& elt)
   {
@@ -247,6 +251,14 @@ TEST(ALGO, PopExpectedElements)
     ++s;
   }
   ASSERT_EQ(6, s);
+}
+
+TEST(ALGO, EmptyAfterClear)
+{
+  forward_list<int> l;
+  l.push_front(0);
+  l.clear();
+  ASSERT_TRUE(l.empty());
 }
 
 TEST(ALGO, RightNumberOfInstances)
@@ -553,6 +565,18 @@ struct cEmpty : forward_list_command
   }
   void show(std::ostream &os) const override { os << "::empty"; }
 };
+struct cClear : forward_list_command
+{
+  void checkPreconditions(forward_list_model const& m) const override {}
+  void apply(forward_list_model& m) const override { m.content.clear(); }
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  {
+    l.clear();
+    RC_ASSERT(l.empty());
+    RC_ASSERT(! FwdData::instances());
+  }
+  void show(std::ostream &os) const override { os << "::clear"; }
+};
 
 RC_GTEST_PROP(ALGO, RandomData, ())
 {
@@ -560,7 +584,7 @@ RC_GTEST_PROP(ALGO, RandomData, ())
   {
     forward_list_model m;
     forward_list<FwdData> l;
-    rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cIteratorTransformAll,cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty>());
+    rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cIteratorTransformAll,cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty,cClear>());
   }
   RC_ASSERT(! FwdData::instances());
 }
