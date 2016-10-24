@@ -87,7 +87,7 @@ template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space
     std::array<std::size_t, DIM> choice;
     for (std::size_t i = 0 ; i != DIM ; ++i)
     {
-      choice[i] = (min_ext[i] + max_ext[i])/2;
+      choice[i] = min_ext[i] + (max_ext[i] - min_ext[i])/2;
     }
 
     // Try with the choice
@@ -161,10 +161,9 @@ TEST(ALGO, 2DSpace)
   ASSERT_TRUE(space.is_solution(answer));
 }
 
-RC_GTEST_PROP(ALGO, Random2DSpace, ())
+RC_GTEST_PROP(ALGO, Random2DSpace, (std::size_t const& w, std::size_t const &h))
 {
-  std::size_t w = *rc::gen::inRange(static_cast<std::size_t>(1), static_cast<std::size_t>(1e6));
-  std::size_t h = *rc::gen::inRange(static_cast<std::size_t>(1), static_cast<std::size_t>(1e6));
+  RC_PRE(w > static_cast<std::size_t>(0) && h > static_cast<std::size_t>(0));
   std::size_t x = *rc::gen::inRange(std::size_t(), w);
   std::size_t y = *rc::gen::inRange(std::size_t(), h);
     
