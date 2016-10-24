@@ -38,6 +38,23 @@ class forward_list
 
 public:
   forward_list() : head() {}
+  forward_list(forward_list<T>&& other) : head(std::move(other.head)) {}
+  forward_list(forward_list<T> const& other) : head()
+  {
+    std::vector<T> h;
+    std::copy(other.begin(), other.end(), std::back_inserter(h));
+    std::for_each(h.rbegin(), h.rend(), [this](T const& item) {this->push_front(std::move(item));});
+  }
+  forward_list<T>& operator=(forward_list<T>&& other) { head = std::move(other.head); return *this; }
+  forward_list<T>& operator=(forward_list<T> const& other)
+  {
+    if (this == &other) return *this;
+    head.reset(nullptr);
+    std::vector<T> h;
+    std::copy(other.begin(), other.end(), std::back_inserter(h));
+    std::for_each(h.rbegin(), h.rend(), [this](T const& item) {this->push_front(std::move(item));});
+    return *this;
+  }
   ~forward_list()
   {
     while(head) { head = head->del(); }
@@ -341,6 +358,107 @@ TEST(ALGO, CopyUsingConstIterators)
   std::vector<int> out;
   std::copy(l.cbegin(), l.cend(), std::back_inserter(out));
   ASSERT_EQ(expected, out);
+}
+
+TEST(ALGO, CopyForwardListConstructor)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  forward_list<int> l2(l);
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out_l;
+  std::copy(l.cbegin(), l.cend(), std::back_inserter(out_l));
+  ASSERT_EQ(expected, out_l);
+  
+  std::vector<int> out_l2;
+  std::copy(l2.cbegin(), l2.cend(), std::back_inserter(out_l2));
+  ASSERT_EQ(expected, out_l2);
+}
+
+TEST(ALGO, CopyMoveForwardListConstructor)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  forward_list<int> l2(std::move(l));
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out_l2;
+  std::copy(l2.cbegin(), l2.cend(), std::back_inserter(out_l2));
+  ASSERT_EQ(expected, out_l2);
+}
+
+TEST(ALGO, CopyForwardListOperator)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  forward_list<int> l2;
+  l2.push_front(5);
+
+  l2 = l;
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out_l;
+  std::copy(l.cbegin(), l.cend(), std::back_inserter(out_l));
+  ASSERT_EQ(expected, out_l);
+  
+  std::vector<int> out_l2;
+  std::copy(l2.cbegin(), l2.cend(), std::back_inserter(out_l2));
+  ASSERT_EQ(expected, out_l2);
+}
+
+TEST(ALGO, CopyMoveForwardListOperator)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  forward_list<int> l2;
+  l2.push_front(5);
+  
+  l2 = std::move(l);
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out_l2;
+  std::copy(l2.cbegin(), l2.cend(), std::back_inserter(out_l2));
+  ASSERT_EQ(expected, out_l2);
+}
+
+TEST(ALGO, CopyMoveLeakFree)
+{
+  typedef CountRefs<3> Counter;
+  ASSERT_EQ(0, Counter::instances());
+  {
+    forward_list<int> l;
+    l.push_front(1);
+    l.push_front(2);
+    l.push_front(3);
+    
+    forward_list<int> l2;
+    l2.push_front(5);
+    l2.push_front(6);
+    l2.push_front(7);
+
+    forward_list<int> l3(l2);
+    l2 = std::move(l3);
+    l3 = std::move(l2);
+
+    l2 = std::move(l2);
+
+    forward_list<int> l4(std::move(l));
+    l = l4;
+  }
+  ASSERT_EQ(0, Counter::instances());
 }
 
 using FwdData = CountRefs<100>;
