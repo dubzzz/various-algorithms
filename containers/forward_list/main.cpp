@@ -2,6 +2,8 @@
 #include <rapidcheck/gtest.h>
 #include <rapidcheck/state.h>
 
+#include <algorithm>
+#include <iterator>
 #include <memory>
 #include <vector>
 
@@ -26,7 +28,8 @@ class forward_list
 
   public:
     template <class... Args> forward_list_node(std::unique_ptr<forward_list_node>&& next, Args&&... args) : _next(std::move(next)), _value(std::forward<Args>(args)...) {}
-
+    
+    forward_list_node* next() { return _next.get(); }
     T& value() { return _value; }
     std::unique_ptr<forward_list_node> del() { return std::move(_next); }
   };
@@ -68,6 +71,45 @@ public:
   {
     return ! head.get();
   }
+
+  class const_iterator : public std::iterator<std::forward_iterator_tag, T>
+  {
+    friend forward_list<T>;
+    forward_list_node* it;
+    explicit const_iterator(forward_list_node* it = nullptr) : it(it) {}
+  
+  public:
+    const_iterator& operator++()
+    {
+      it = it != nullptr ? it->next() : nullptr;
+      return *this;
+    }
+    const_iterator operator++(int)
+    {
+      const iterator ret = *this;
+      ++(*this);
+      return ret;
+    }
+    bool operator==(const_iterator other) const { return it == other.it; }
+    bool operator!=(const_iterator other) const { return !(*this == other); }
+    T const& operator*() const { return it->value(); }
+  };
+  class iterator : public const_iterator
+  {
+    friend forward_list<T>;
+    explicit iterator(forward_list_node* it = nullptr) : const_iterator(it) {}
+  public:
+    iterator(const_iterator it) : const_iterator(it) {}    
+    iterator& operator++() { return static_cast<iterator&>(const_iterator::operator++());}
+    iterator operator++(int) { return const_iterator::operator++(0);}
+    T& operator*() const { return const_cast<T&>(const_iterator::operator*()); }
+  };
+  iterator begin() { return iterator(head.get()); }
+  iterator end() { return iterator(); }
+  const_iterator begin() const { return const_iterator(head.get()); }
+  const_iterator end() const { return const_iterator(); }
+  const_iterator cbegin() const { return const_iterator(head.get()); }
+  const_iterator cend() const { return const_iterator(); }
 };
 
 }
@@ -94,8 +136,8 @@ public:
   CountRefs(CountRefs<counter_id>&& other) : a(other.a), b(other.b) { ++refs(); }
   CountRefs(CountRefs<counter_id> const& other) : a(other.a), b(other.b) { ++refs(); }
   
-  CountRefs<counter_id>& operator=(CountRefs<counter_id>&& other) { a = other.a; b = other.b; }
-  CountRefs<counter_id>& operator=(CountRefs<counter_id> const& other) { a = other.a; b = other.b; }
+  CountRefs<counter_id>& operator=(CountRefs<counter_id>&& other) { a = other.a; b = other.b; return *this; }
+  CountRefs<counter_id>& operator=(CountRefs<counter_id> const& other) { a = other.a; b = other.b; return *this; }
   
   bool operator==(CountRefs<counter_id>const& other) { return a == other.a && b == other.b; }
   bool operator!=(CountRefs<counter_id>const& other) { return ! (*this == other); }
@@ -234,6 +276,72 @@ TEST(ALGO, DestructorRunsDestructors)
   ASSERT_EQ(0, Counter::instances());
 }
 
+TEST(ALGO, CopyEmptyListUsingIterators)
+{
+  forward_list<int> l;
+
+  std::vector<int> const expected = {};
+  std::vector<int> out;
+  std::copy(l.begin(), l.end(), std::back_inserter(out));
+  ASSERT_EQ(expected, out);
+}
+
+TEST(ALGO, CopyUsingIterators)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out;
+  std::copy(l.begin(), l.end(), std::back_inserter(out));
+  ASSERT_EQ(expected, out);
+}
+
+TEST(ALGO, TransformUsingIterators)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  std::vector<int> const expected = { 6, 4, 2 };
+  std::vector<int> out;
+  std::transform(l.begin(), l.end(), l.begin(), [](int i){return 2*i;});
+  std::copy(l.begin(), l.end(), std::back_inserter(out));
+  ASSERT_EQ(expected, out);
+}
+
+TEST(ALGO, TransformUsingIteratorsLeakFree)
+{
+  typedef CountRefs<2> Counter;
+  ASSERT_EQ(0, Counter::instances());
+  {
+    forward_list<int> l;
+    l.push_front(1);
+    l.push_front(2);
+    l.push_front(3);
+
+    std::vector<int> out;
+    std::transform(l.begin(), l.end(), l.begin(), [](int i){return 2*i;});
+    std::copy(l.begin(), l.end(), std::back_inserter(out));
+  }
+  ASSERT_EQ(0, Counter::instances());
+}
+
+TEST(ALGO, CopyUsingConstIterators)
+{
+  forward_list<int> l;
+  l.push_front(1);
+  l.push_front(2);
+  l.push_front(3);
+
+  std::vector<int> const expected = { 3, 2, 1 };
+  std::vector<int> out;
+  std::copy(l.cbegin(), l.cend(), std::back_inserter(out));
+  ASSERT_EQ(expected, out);
+}
 
 using FwdData = CountRefs<100>;
 using RefData = CountRefs<101>;
@@ -243,6 +351,21 @@ struct forward_list_model
 };
 using forward_list_command = rc::state::Command<forward_list_model, forward_list<FwdData>>;
 
+struct cIteratorTransformAll : forward_list_command
+{
+  void checkPreconditions(forward_list_model const& m) const override {}
+  void apply(forward_list_model& m) const override
+  {
+    std::transform(m.content.begin(), m.content.end(), m.content.begin(), [](RefData const& data){return RefData(data.b, data.a);});
+  }
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  {
+    std::size_t num_before = FwdData::instances();
+    std::transform(l.begin(), l.end(), l.begin(), [](FwdData const& data){return FwdData(data.b, data.a);});
+    RC_ASSERT(num_before == FwdData::instances());
+  }
+  void show(std::ostream &os) const override { os << "::iterator<TransformAll>"; }
+};
 struct cPushFront : forward_list_command
 {
   int v1 = *rc::gen::inRange(0, 5);
@@ -319,7 +442,7 @@ RC_GTEST_PROP(ALGO, RandomData, ())
   {
     forward_list_model m;
     forward_list<FwdData> l;
-    rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty>());
+    rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cIteratorTransformAll,cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty>());
   }
   RC_ASSERT(! FwdData::instances());
 }
