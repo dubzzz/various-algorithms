@@ -24,29 +24,55 @@ using std::forward_list;
 
 typedef int InnerData;
 
+template <int counter_id>
+class CountRefs
+{
+  static std::size_t& refs()
+  {
+    static std::size_t refs_ = 0;
+    return refs_;
+  }
+public:
+  int a, b;
+  CountRefs(int a, int b) : a(a), b(b) { ++refs(); }
+  
+  CountRefs(CountRefs<counter_id>&& other) : a(other.a), b(other.b) { ++refs(); }
+  CountRefs(CountRefs<counter_id> const& other) : a(other.a), b(other.b) { ++refs(); }
+  
+  CountRefs<counter_id>& operator=(CountRefs<counter_id>&& other) { a = other.a; b = other.b; }
+  CountRefs<counter_id>& operator=(CountRefs<counter_id> const& other) { a = other.a; b = other.b; }
+  
+  bool operator==(CountRefs<counter_id> const& other) { return a == other.a && b == other.b; }
+  bool operator!=(CountRefs<counter_id> const& other) { return ! (*this == other); }
+  
+  ~CountRefs() { --refs(); }
+
+  static std::size_t instances() { return refs(); }
+};
+
 TEST(ALGO, DefaultConstructor)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   ASSERT_TRUE(l.empty());
 }
 
 TEST(ALGO, NotEmptyAfterFirstPush)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.push_front(0);
   ASSERT_FALSE(l.empty());
 }
 
 TEST(ALGO, NotEmptyAfterFirstEmplace)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.emplace_front(0);
   ASSERT_FALSE(l.empty());
 }
 
 TEST(ALGO, EmptyAfterHavingPoppedEverything)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.push_front(0);
   l.pop_front();
   ASSERT_TRUE(l.empty());
@@ -54,7 +80,7 @@ TEST(ALGO, EmptyAfterHavingPoppedEverything)
 
 TEST(ALGO, PushMultipleElements)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.push_front(5);
   l.push_front(4);
   l.push_front(3);
@@ -70,7 +96,7 @@ TEST(ALGO, PushMultipleElements)
 
 TEST(ALGO, EmplaceMultipleElements)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.emplace_front(65);
   l.emplace_front(105);
   l.emplace_front(15);
@@ -89,7 +115,7 @@ TEST(ALGO, EmplaceMultipleElements)
 
 TEST(ALGO, PopExpectedElements)
 {
-  forward_list<InnerData> l;
+  forward_list<int> l;
   l.push_front(65);
   l.push_front(105);
   l.emplace_front(15);
@@ -97,7 +123,7 @@ TEST(ALGO, PopExpectedElements)
   l.emplace_front(4);
   l.push_front(3);
 
-  const InnerData expected[] = {3,4,5,15,105,65};
+  const int expected[] = {3,4,5,15,105,65};
 
   std::size_t s {};
   while (! l.empty())
@@ -107,6 +133,50 @@ TEST(ALGO, PopExpectedElements)
     ++s;
   }
   ASSERT_EQ(6, s);
+}
+
+TEST(ALGO, RightNumberOfInstances)
+{
+  typedef CountRefs<0> Counter;
+  ASSERT_EQ(0, Counter::instances());
+  forward_list<Counter> l;
+  l.push_front(Counter(1,0));
+  ASSERT_EQ(1, Counter::instances());
+  l.emplace_front(2,3);
+  ASSERT_EQ(2, Counter::instances());
+  {
+    CountRefs<0>& f(l.front());
+    ASSERT_EQ(2, Counter::instances());
+    ASSERT_TRUE(f.a == 2 && f.b == 3);
+    f.a += 1;
+  }
+  {
+    CountRefs<0> f(l.front());
+    ASSERT_EQ(3, Counter::instances());
+    ASSERT_TRUE(f.a == 3 && f.b == 3);
+  }
+  
+  std::size_t s {};
+  while (! l.empty())
+  {
+    l.pop_front();
+    ++s;
+    ASSERT_EQ(2 - s, Counter::instances());
+  }
+  ASSERT_EQ(0, Counter::instances());
+}
+
+TEST(ALGO, DestructorRunsDestructors)
+{
+  typedef CountRefs<1> Counter;
+  ASSERT_EQ(0, Counter::instances());
+  {
+    forward_list<Counter> l;
+    l.push_front(Counter(1,0));
+    l.emplace_front(1,0);
+    ASSERT_EQ(2, Counter::instances());
+  }
+  ASSERT_EQ(0, Counter::instances());
 }
 
 struct forward_list_model
