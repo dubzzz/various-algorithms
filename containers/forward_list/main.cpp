@@ -2,22 +2,77 @@
 #include <rapidcheck/gtest.h>
 #include <rapidcheck/state.h>
 
-#include <forward_list>
+#include <memory>
 #include <vector>
-
-using std::forward_list;
 
 // Algorithm to be tested
 
 namespace v1
 {
 
+template<typename T, typename... Args>
+std::unique_ptr<T> make_unique(Args&&... args)
+{
+  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
+}
+
+template <class T>
 class forward_list
-{};
+{
+  class forward_list_node
+  {
+    std::unique_ptr<forward_list_node> _next;
+    T _value;
+
+  public:
+    template <class... Args> forward_list_node(std::unique_ptr<forward_list_node>&& next, Args&&... args) : _next(std::move(next)), _value(std::forward<Args>(args)...) {}
+
+    T& value() { return _value; }
+    std::unique_ptr<forward_list_node> del() { return std::move(_next); }
+  };
+
+  std::unique_ptr<forward_list_node> head;
+
+public:
+  forward_list() : head() {}
+  ~forward_list()
+  {
+    while(head) { head = head->del(); }
+  }
+  void push_front(T&& elt)
+  {
+    head = make_unique<forward_list_node>(std::move(head), std::forward<T>(elt));
+  }
+  void push_front(T const& elt)
+  {
+    head = make_unique<forward_list_node>(std::move(head), elt);
+  }
+  template <class... Args> void emplace_front(Args&&... elts)
+  {
+    head = make_unique<forward_list_node>(std::move(head), std::forward<Args>(elts)...);
+  }
+  T& front()
+  {
+    return head->value();
+  }
+  T const& front() const
+  {
+    return head->value();
+  }
+  forward_list<T>& pop_front()
+  {
+    head = head->del();
+    return *this;
+  }
+  bool empty() const
+  {
+    return ! head.get();
+  }
+};
 
 }
 
-using std::forward_list;
+using v1::forward_list;
 #define ALGO FORWARD_LIST
 
 // Running tests
