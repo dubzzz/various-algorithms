@@ -42,8 +42,8 @@ public:
   CountRefs<counter_id>& operator=(CountRefs<counter_id>&& other) { a = other.a; b = other.b; }
   CountRefs<counter_id>& operator=(CountRefs<counter_id> const& other) { a = other.a; b = other.b; }
   
-  bool operator==(CountRefs<counter_id> const& other) { return a == other.a && b == other.b; }
-  bool operator!=(CountRefs<counter_id> const& other) { return ! (*this == other); }
+  bool operator==(CountRefs<counter_id>const& other) { return a == other.a && b == other.b; }
+  bool operator!=(CountRefs<counter_id>const& other) { return ! (*this == other); }
   
   ~CountRefs() { --refs(); }
 
@@ -179,49 +179,58 @@ TEST(ALGO, DestructorRunsDestructors)
   ASSERT_EQ(0, Counter::instances());
 }
 
+
+using FwdData = CountRefs<100>;
+using RefData = CountRefs<101>;
 struct forward_list_model
 {
-  std::vector<InnerData> content;
+  std::vector<RefData> content;
 };
-
-using forward_list_command = rc::state::Command<forward_list_model, forward_list<InnerData>>;
+using forward_list_command = rc::state::Command<forward_list_model, forward_list<FwdData>>;
 
 struct cPushFront : forward_list_command
 {
-  int value = *rc::gen::inRange(0, 20);
+  int v1 = *rc::gen::inRange(0, 5);
+  int v2 = *rc::gen::inRange(0, 5);
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(m.content.size() < 1e5); }
   void apply(forward_list_model& m) const override
   {
-    InnerData elt(value);
+    RefData elt(v1, v2);
     m.content.push_back(elt);
   }
-  void run(forward_list_model const& m, forward_list<InnerData>& l) const override
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
-    InnerData elt(value);
+    std::size_t num_before = FwdData::instances();
+    FwdData elt(v1, v2);
     l.push_front(elt);
     RC_ASSERT(! l.empty());
+    RC_ASSERT(num_before +2 == FwdData::instances());
   }
-  void show(std::ostream &os) const override { os << "::push_front(InnerData(" << value << "))"; }
+  void show(std::ostream &os) const override { os << "::push_front(Data(" << v1 << ", " << v2 << "))"; }
 };
 struct cEmplaceFront : forward_list_command
 {
-  int value = *rc::gen::inRange(0, 20);
+  int v1 = *rc::gen::inRange(0, 5);
+  int v2 = *rc::gen::inRange(0, 5);
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(m.content.size() < 1e5); }
-  void apply(forward_list_model& m) const override { m.content.emplace_back(value); }
-  void run(forward_list_model const& m, forward_list<InnerData>& l) const override
+  void apply(forward_list_model& m) const override { m.content.emplace_back(v1, v2); }
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
-    l.emplace_front(value);
+    std::size_t num_before = FwdData::instances();
+    l.emplace_front(v1, v2);
     RC_ASSERT(! l.empty());
+    RC_ASSERT(num_before +1 == FwdData::instances());
   }
-  void show(std::ostream &os) const override { os << "::emplace_front(" << value << ")"; }
+  void show(std::ostream &os) const override { os << "::emplace_front(" << v1 << ", " << v2 << ")"; }
 };
 struct cFront : forward_list_command
 {
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(! m.content.empty()); }
   void apply(forward_list_model& m) const override {}
-  void run(forward_list_model const& m, forward_list<InnerData>& l) const override
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
-    RC_ASSERT(m.content.back() == l.front());
+    RC_ASSERT(m.content.back().a == l.front().a);
+    RC_ASSERT(m.content.back().b == l.front().b);
   }
   void show(std::ostream &os) const override { os << "::front"; }
 };
@@ -229,9 +238,11 @@ struct cPopFront : forward_list_command
 {
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(! m.content.empty()); }
   void apply(forward_list_model& m) const override { m.content.pop_back(); }
-  void run(forward_list_model const& m, forward_list<InnerData>& l) const override
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
+    std::size_t num_before = FwdData::instances();
     l.pop_front();
+    RC_ASSERT(num_before -1 == FwdData::instances());
   }
   void show(std::ostream &os) const override { os << "::pop_front"; }
 };
@@ -239,18 +250,23 @@ struct cEmpty : forward_list_command
 {
   void checkPreconditions(forward_list_model const& m) const override {}
   void apply(forward_list_model& m) const override {}
-  void run(forward_list_model const& m, forward_list<InnerData>& l) const override
+  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
     RC_ASSERT(l.empty() == m.content.empty());
+    RC_ASSERT(l.empty() == !FwdData::instances());
   }
   void show(std::ostream &os) const override { os << "::empty"; }
 };
 
 RC_GTEST_PROP(ALGO, RandomData, ())
 {
-  forward_list_model m;
-  forward_list<InnerData> l;
-  rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty>());
+  RC_ASSERT(! FwdData::instances());
+  {
+    forward_list_model m;
+    forward_list<FwdData> l;
+    rc::state::check(m, l, rc::state::gen::execOneOfWithArgs<cPushFront,cEmplaceFront,cFront,cPopFront,cEmpty>());
+  }
+  RC_ASSERT(! FwdData::instances());
 }
 
 int main(int argc, char **argv)
