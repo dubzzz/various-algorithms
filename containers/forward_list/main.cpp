@@ -12,12 +12,6 @@
 namespace v1
 {
 
-template<typename T, typename... Args>
-std::unique_ptr<T> make_unique(Args&&... args)
-{
-  return std::unique_ptr<T>(new T(std::forward<Args>(args)...));
-}
-
 template <class T>
 class forward_list
 {
@@ -65,15 +59,15 @@ public:
   }
   void push_front(T&& elt)
   {
-    head = make_unique<forward_list_node>(std::move(head), std::forward<T>(elt));
+    head = std::make_unique<forward_list_node>(std::move(head), std::forward<T>(elt));
   }
   void push_front(T const& elt)
   {
-    head = make_unique<forward_list_node>(std::move(head), elt);
+    head = std::make_unique<forward_list_node>(std::move(head), elt);
   }
   template <class... Args> void emplace_front(Args&&... elts)
   {
-    head = make_unique<forward_list_node>(std::move(head), std::forward<Args>(elts)...);
+    head = std::make_unique<forward_list_node>(std::move(head), std::forward<Args>(elts)...);
   }
   T& front()
   {

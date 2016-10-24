@@ -1,4 +1,4 @@
-CFLAGS=-std=c++11 -Wall -I. -I/usr/local/include -IRAPIDCHECK_PATH/include -IRAPIDCHECK_PATH/extras/gtest/include
+CFLAGS=-std=c++1y -Wall -I. -I/usr/local/include -IRAPIDCHECK_PATH/include -IRAPIDCHECK_PATH/extras/gtest/include
 LDFLAGS=-L/usr/local/lib -lgtest -pthread RAPIDCHECK_PATH/librapidcheck.a
 COLOR=\033[0;33m
 CLEAR_COLOR=\033[0;0m
