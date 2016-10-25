@@ -52,7 +52,7 @@ public:
   std::array<Where, DIM> guess(std::array<std::size_t, DIM> const& choice)
   {
     std::size_t max_dim = *std::max_element(dimensions_.begin(), dimensions_.end());
-    if (! AssertSystem::expect(++num_guess <= 1 +std::ceil(std::log(max_dim)/std::log(2)), "Too many iterations to solve this problem")) throw too_many_iterations("Too many iterations to solve this problem");
+    if (! AssertSystem::expect(++num_guess <= std::ceil(std::log(max_dim)/std::log(2)), "Too many iterations to solve this problem")) throw too_many_iterations("Too many iterations to solve this problem");
     
     std::array<Where, DIM> answer;
     for (std::size_t i = 0 ; i != DIM ; ++i)
@@ -82,6 +82,22 @@ template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space
   
   while (true)
   {
+    // Analyze remaining possibilities (break if unique solution)
+
+    bool min_is_solution { true };
+    for (std::size_t i = 0 ; i != DIM ; ++i)
+    {
+      if (min_ext[i] +1 != max_ext[i])
+      {
+        min_is_solution = false;
+        break;
+      }
+    }
+    if (min_is_solution)
+    {
+      break;
+    }
+    
     // Build a choice/guess
     
     std::array<std::size_t, DIM> choice;
@@ -107,22 +123,6 @@ template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space
           min_ext[i] = choice[i] +1;
           break;
       }
-    }
-
-    // Analyze remaining possibilities
-
-    bool min_is_solution { true };
-    for (std::size_t i = 0 ; i != DIM ; ++i)
-    {
-      if (min_ext[i] +1 != max_ext[i])
-      {
-        min_is_solution = false;
-        break;
-      }
-    }
-    if (min_is_solution)
-    {
-      break;
     }
   }
 
