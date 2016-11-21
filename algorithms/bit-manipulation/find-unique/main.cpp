@@ -33,14 +33,13 @@ TEST(ALGO, VariousValues)
   ASSERT_EQ(42, find_unique(std::begin(vs), std::end(vs)));
 }
 
-RC_GTEST_PROP(ALGO, RandomData, (const std::vector<int>& test, int answer))
+RC_GTEST_PROP(ALGO, RandomData, (const std::vector<int>& test, int answer, unsigned seed))
 {
   std::vector<int> vs(test);
   std::copy(std::begin(test), std::end(test), std::back_inserter(vs));
   vs.push_back(answer);
   
-  std::random_device rd;
-  std::mt19937 g(rd()); //we cannot reproduce a run do to that one, change random generator for better tests
+  std::mt19937 g(seed);
   std::shuffle(std::begin(vs), std::end(vs), g);
 
   RC_ASSERT(answer == find_unique(std::begin(vs), std::end(vs)));
