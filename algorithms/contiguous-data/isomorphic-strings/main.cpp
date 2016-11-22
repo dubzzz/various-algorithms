@@ -75,39 +75,48 @@ TEST(ALGO, NonIsomorphicStrings)
   ASSERT_FALSE(isomorphics("foo", "bar"));
 }
 
-RC_GTEST_PROP(ALGO, AlwaysIsomorphicRandomData, (const std::string& s1, unsigned seed))
+RC_GTEST_PROP(ALGO, AlwaysIsomorphicRandomData, (const std::string& s))
 {
-  std::vector<char> remap(UCHAR_MAX +1);
-  std::iota(std::begin(remap), std::end(remap), CHAR_MIN);
-  std::mt19937 g(seed);
-  std::shuffle(std::begin(remap), std::end(remap), g);
+  std::string s2 = *rc::gen::apply([s](unsigned seed) {
+    std::vector<char> remap(UCHAR_MAX +1);
+    std::iota(std::begin(remap), std::end(remap), CHAR_MIN);
+    std::mt19937 g(seed);
+    std::shuffle(std::begin(remap), std::end(remap), g);
+    
+    std::string s2;
+    std::transform(std::begin(s), std::end(s), std::back_inserter(s2), [&remap](char cur) { return remap[static_cast<int>(cur) - CHAR_MIN]; });
+    return s2;
+  }, rc::gen::arbitrary<unsigned>()).as("isomorphic transformation of s (s2)");
 
-  std::string s2;
-  std::transform(std::begin(s1), std::end(s1), std::back_inserter(s2), [&remap](char cur) { return remap[static_cast<int>(cur) - CHAR_MIN]; });
-
-  RC_ASSERT(isomorphics(s1, s2));
+  RC_ASSERT(isomorphics(s, s2));
 }
 
-RC_GTEST_PROP(ALGO, OneNonIsomorphicRandomData, (const std::string& s, unsigned seed))
+RC_GTEST_PROP(ALGO, OneNonIsomorphicRandomData, (const std::string& s))
 {
   RC_PRE(! s.empty());
   
-  std::vector<char> remap(UCHAR_MAX +1);
-  std::iota(std::begin(remap), std::end(remap), CHAR_MIN);
-  std::mt19937 g(seed);
-  std::shuffle(std::begin(remap), std::end(remap), g);
+  std::size_t selected_id = *rc::gen::inRange<std::size_t>(0, s.size()).as("selected position for copy (selected_id)");
+  std::size_t selected_swap_id = *rc::gen::inRange<std::size_t>(0, s.size()).as("selected position for swap (selected_swap_id)");
   
-  std::string s1(s);
-  std::string s2;
-  std::transform(std::begin(s1), std::end(s1), std::back_inserter(s2), [&remap](char cur) { return remap[static_cast<int>(cur) - CHAR_MIN]; });
-  
-  std::uniform_int_distribution<std::size_t> dist_select_elt(0, s2.size() -1);
-  std::uniform_int_distribution<int> dist_elt(1, 255);
-  auto selected_id = dist_select_elt(g);
-  s1 += s1[selected_id];
-  s2 += s2[selected_id];
-  s2[selected_id] += dist_elt(g);
-  
+  std::string s1 = *rc::gen::apply([selected_id,selected_swap_id,s]() {
+    std::string s1 = s + s[selected_id];
+    std::swap(*s1.rbegin(), s1[selected_swap_id]);
+    return s1;
+  }).as("extension of s (s1)");
+  std::string s2 = *rc::gen::apply([selected_id,selected_swap_id,s](unsigned seed, unsigned char inc) {
+    std::vector<char> remap(UCHAR_MAX +1);
+    std::iota(std::begin(remap), std::end(remap), CHAR_MIN);
+    std::mt19937 g(seed);
+    std::shuffle(std::begin(remap), std::end(remap), g);
+    
+    std::string s2;
+    std::transform(std::begin(s), std::end(s), std::back_inserter(s2), [&remap](char cur) { return remap[static_cast<int>(cur) - CHAR_MIN]; });
+    s2 += s2[selected_id];
+    s2[selected_id] += inc;
+    std::swap(*s2.rbegin(), s2[selected_swap_id]);
+    return s2;
+  }, rc::gen::arbitrary<unsigned>(), rc::gen::inRange(1, 256)).as("non-isomorphic transformation of s (s2)");
+
   RC_ASSERT(! isomorphics(s1, s2));
 }
 
