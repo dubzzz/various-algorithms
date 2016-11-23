@@ -124,21 +124,25 @@ struct Plus
 {
   static constexpr char symbol() { return '+'; }
   static long long eval(long long a, long long b) { return a+b; }
+  static bool overflow(long long a, long long b) { return ~((a > 0) ^ (b > 0)) && std::abs(a) > std::numeric_limits<long long>::max() - std::abs(b); }
 };
 struct Minus
 {
   static constexpr char symbol() { return '-'; }
   static long long eval(long long a, long long b) { return a-b; }
+  static bool overflow(long long a, long long b) { return Plus::overflow(a, -b); }
 };
 struct Multiply
 {
   static constexpr char symbol() { return '*'; }
   static long long eval(long long a, long long b) { return a*b; }
+  static bool overflow(long long a, long long b) { return b != 0L && std::abs(a) > std::numeric_limits<long long>::max() / std::abs(b); }
 };
 struct Divide
 {
   static constexpr char symbol() { return '/'; }
   static long long eval(long long a, long long b) { return b != 0L ? a/b : 0L; }
+  static bool overflow(long long /*a*/, long long b) { return b == 0L; }
 };
 
 template <class Operation> class BinaryOperation final : public Expression
