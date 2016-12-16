@@ -1,5 +1,40 @@
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+build/*
+examples/**/build/*
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
 *.out
-*/Makefile
-*/*/Makefile
-*/*/*/Makefile
-*/*/*/*/Makefile
+*.app
+
+# CMake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+install_manifest.txt
+CTestTestfile.cmake
+Testing
