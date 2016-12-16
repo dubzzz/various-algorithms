@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 
-static std::size_t longest_size(std::string const& in)
+std::size_t longest_size(std::string const& in)
 {
   std::size_t max_length = 0;
   std::deque<std::size_t> switches; // valid char switches
@@ -39,6 +39,5 @@ static std::size_t longest_size(std::string const& in)
   return max_length;
 }
 
-#define ALGO LongestSubstr2Uniques_DEFAULT
 #include "tests.hpp"
 

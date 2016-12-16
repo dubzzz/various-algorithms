@@ -8,37 +8,31 @@
 // For example, given "abcbbbbcccbdddadacb", the longest substring that contains 2 unique character is "bcbbbbcccb".
 
 // Algorithm to be tested:
-// static std::size_t longest_size(std::string const& in);
+// std::size_t longest_size(std::string const& in);
 
 // Running tests
 
-
-#ifndef ALGO
-# define ALGO LongestSubstr2Uniques
-#endif
-
-namespace {
-TEST(ALGO, EmptyString)
+TEST(TEST_NAME, EmptyString)
 {
   ASSERT_EQ(0, longest_size(""));
 }
 
-TEST(ALGO, UniqueCharacter)
+TEST(TEST_NAME, UniqueCharacter)
 {
   ASSERT_EQ(5, longest_size("aaaaa"));
 }
 
-TEST(ALGO, TwoCharacters)
+TEST(TEST_NAME, TwoCharacters)
 {
   ASSERT_EQ(7, longest_size("abbaaba"));
 }
 
-TEST(ALGO, SubstringOfMainString)
+TEST(TEST_NAME, SubstringOfMainString)
 {
   ASSERT_EQ(10, longest_size("abcbbbbcccbdddadacb"));
 }
 
-RC_GTEST_PROP(ALGO, RandomData, (char c1, char c2))
+RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
 {
   RC_PRE(c1 != c2);
   
@@ -67,6 +61,5 @@ RC_GTEST_PROP(ALGO, RandomData, (char c1, char c2))
   
   std::string data = pre_str + answer_str + post_str;
   RC_ASSERT(answer_str.size() == longest_size(data));
-}
 }
 

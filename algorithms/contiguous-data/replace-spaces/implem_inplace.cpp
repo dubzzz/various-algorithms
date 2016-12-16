@@ -5,7 +5,6 @@
 
 // In-place
 
-namespace {
 void replace_spaces_inplace(std::string& in)
 {
   // Replace all spaces of std::string <in> using only <in>
@@ -32,15 +31,13 @@ void replace_spaces_inplace(std::string& in)
     }
   }
 }
-}
 
-static std::string replace_spaces(std::string const& in)
+std::string replace_spaces(std::string const& in)
 {
   std::string copy { in };
   replace_spaces_inplace(copy);
   return copy;
 }
 
-#define ALGO ReplaceSpaces_INPLACE
 #include "tests.hpp"
 

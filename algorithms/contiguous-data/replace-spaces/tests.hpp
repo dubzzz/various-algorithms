@@ -7,51 +7,46 @@
 // Replace all spaces of a std::string <in> by &nbsp;
 
 // Algorithm to be tested:
-// static std::string replace_spaces(std::string const&);
+// std::string replace_spaces(std::string const&);
 
 // Running tests
 
-#ifndef ALGO
-# define ALGO ReplaceInplace
-#endif
-
-namespace {
-TEST(ALGO, EmptyString)
+TEST(TEST_NAME, EmptyString)
 {
   ASSERT_EQ("", replace_spaces(""));
 }
 
-TEST(ALGO, SingleCharacterNoSpace)
+TEST(TEST_NAME, SingleCharacterNoSpace)
 {
   ASSERT_EQ("A", replace_spaces("A"));
 }
 
-TEST(ALGO, SingleSpace)
+TEST(TEST_NAME, SingleSpace)
 {
   ASSERT_EQ("&nbsp;", replace_spaces(" "));
 }
 
-TEST(ALGO, NoSpaces)
+TEST(TEST_NAME, NoSpaces)
 {
   ASSERT_EQ("ThisIsATestWhereIDidNotUseSpaceCharacter", replace_spaces("ThisIsATestWhereIDidNotUseSpaceCharacter"));
 }
 
-TEST(ALGO, MultipleSpaces)
+TEST(TEST_NAME, MultipleSpaces)
 {
   ASSERT_EQ("This&nbsp;Is&nbsp;A&nbsp;Test&nbsp;With&nbsp;Multiple&nbsp;Space&nbsp;Characters", replace_spaces("This Is A Test With Multiple Space Characters"));
 }
 
-TEST(ALGO, ConsecutiveSpaces)
+TEST(TEST_NAME, ConsecutiveSpaces)
 {
   ASSERT_EQ("Hello&nbsp;&nbsp;&nbsp;World&nbsp;!", replace_spaces("Hello   World !"));
 }
 
-TEST(ALGO, StartsAndEndsBySpaces)
+TEST(TEST_NAME, StartsAndEndsBySpaces)
 {
   ASSERT_EQ("&nbsp;&nbsp;&nbsp;Let's&nbsp;Try&nbsp;It!&nbsp;&nbsp;", replace_spaces("   Let's Try It!  "));
 }
 
-RC_GTEST_PROP(ALGO, RandomData, (const std::string& test))
+RC_GTEST_PROP(TEST_NAME, RandomData, (const std::string& test))
 {
   std::string expected;
 
@@ -63,6 +58,5 @@ RC_GTEST_PROP(ALGO, RandomData, (const std::string& test))
   expected += test.substr(token_start);
   
   RC_ASSERT(replace_spaces(test) == expected);
-}
 }
 
