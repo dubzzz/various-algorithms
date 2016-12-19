@@ -33,5 +33,11 @@ enable_testing()
 include_directories(${GTEST_INCLUDE_DIRS})
 include_directories(${RAPIDCHECK_INCLUDE_DIRS})
 
-add_subdirectory(algorithms)
+file(GLOB_RECURSE CMAKEFILES **/CMakeLists.txt)
+foreach(CMAKEFILE ${CMAKEFILES})
+  if(NOT ${CMAKEFILE} MATCHES "^.*/rapidcheck/.*")
+    get_filename_component(DIR_PATH ${CMAKEFILE} DIRECTORY)
+    add_subdirectory(${DIR_PATH})
+  endif()
+endforeach()
 
