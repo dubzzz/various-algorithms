@@ -27,5 +27,6 @@ unsigned most_significant_position(unsigned num)
   return most_significant_position_helper(num, defining_sequence());
 }
 
+#define NO_CONSTEXPR
 #include "tests.hpp"
 

@@ -7,6 +7,13 @@
 // Algorithm to be tested
 // unsigned most_significant_position(unsigned)
 
+// Constexpr tests
+
+#if ! defined(NO_CONSTEXPR)
+  static_assert(most_significant_position(0) == 0, "most_significant_position(0) is 0");
+  static_assert(most_significant_position(8) == 4, "most_significant_position(8) is 4");
+#endif
+
 // Running tests
 
 TEST(TEST_NAME, Zero)
