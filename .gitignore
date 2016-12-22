@@ -5,6 +5,7 @@
 *.obj
 build/*
 examples/**/build/*
+callgrind.*
 
 # Precompiled Headers
 *.gch
