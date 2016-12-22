@@ -1,4 +1,4 @@
-#if defined(__clang__) || \
+#if (defined(__clang__) && (__clang_major__ > 3 || (__clang_major__ >= 3 && __clang_minor__ >= 4))) || \
     (defined(__GNUC__) && defined(__GNUC_MINOR__) && defined(__GNUC_PATCHLEVEL__) && (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__ > 50100))
 
 #include <limits>
@@ -60,5 +60,8 @@ auto string_to_longlong(std::string const& expression, unsigned base=10) { retur
 
 #include "tests.hpp"
 
+#else
+#   warning "Compiler not supported for this implementation"
+#   warning "requirement: compatible with C++14's constexpr"
 #endif
 
