@@ -112,7 +112,7 @@ template <class Operation> class BinaryOperation final : public Expression
   std::unique_ptr<Expression> _right;
 
 public:
-  BinaryOperation(std::unique_ptr<Expression>&& left, std::unique_ptr<Expression>&& right) : Expression(), _left(left), _right(right)
+  BinaryOperation(std::unique_ptr<Expression>&& left, std::unique_ptr<Expression>&& right) : Expression(), _left(std::move(left)), _right(std::move(right))
   {
     assert(_left);
     assert(_right);

@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 2.8.8)
 
+
 project(myProject C CXX)
 find_package(GTest REQUIRED)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
@@ -11,6 +12,16 @@ message(STATUS "Operating System: " ${CMAKE_SYSTEM})
 set(RAPIDCHECK_PATH rapidcheck)
 set(RAPIDCHECK_INCLUDE_DIRS ${RAPIDCHECK_PATH}/include ${RAPIDCHECK_PATH}/extras/gtest/include)
 add_subdirectory(${RAPIDCHECK_PATH})
+
+option(USE_CLANG "build binaries using clang" OFF)
+option(USE_GCC "build binaries using g++" OFF)
+if (USE_CLANG)
+  set(CMAKE_C_COMPILER "clang" CACHE string "clang compiler" FORCE)
+  set(CMAKE_CXX_COMPILER "clang++" CACHE string "clang++ compiler" FORCE)
+elseif (USE_GCC)
+  set(CMAKE_C_COMPILER "gcc" CACHE string "gcc compiler" FORCE)
+  set(CMAKE_CXX_COMPILER "g++" CACHE string "g++ compiler" FORCE)
+endif()
 
 include(CheckCXXCompilerFlag)
 CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)

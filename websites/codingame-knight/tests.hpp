@@ -29,28 +29,28 @@ struct RcAssert
 
 TEST(TEST_NAME, 2DSpaceIsAPoint)
 {
-  Space<2, GAssert> space({1, 1}, {0, 0});
+  Space<2, GAssert> space({{1, 1}}, {{0, 0}});
   auto answer = locate_in_space(space);
   ASSERT_TRUE(space.is_solution(answer));
 }
 
 TEST(TEST_NAME, 2DSpaceIsALine)
 {
-  Space<2, GAssert> space({10, 1}, {9, 0});
+  Space<2, GAssert> space({{10, 1}}, {{9, 0}});
   auto answer = locate_in_space(space);
   ASSERT_TRUE(space.is_solution(answer));
 }
 
 TEST(TEST_NAME, 2DSpaceIsAColumn)
 {
-  Space<2, GAssert> space({1, 10}, {0, 9});
+  Space<2, GAssert> space({{1, 10}}, {{0, 9}});
   auto answer = locate_in_space(space);
   ASSERT_TRUE(space.is_solution(answer));
 }
 
 TEST(TEST_NAME, 2DSpace)
 {
-  Space<2, GAssert> space({1000, 1000}, {1, 1});
+  Space<2, GAssert> space({{1000, 1000}}, {{1, 1}});
   auto answer = locate_in_space(space);
   ASSERT_TRUE(space.is_solution(answer));
 }
@@ -61,7 +61,7 @@ RC_GTEST_PROP(TEST_NAME, Random2DSpace, (std::size_t const& w, std::size_t const
   std::size_t x = *rc::gen::inRange(std::size_t(), w);
   std::size_t y = *rc::gen::inRange(std::size_t(), h);
     
-  Space<2, RcAssert> space({w, h}, {x, y});
+  Space<2, RcAssert> space({{w, h}}, {{x, y}});
   auto answer = locate_in_space(space);
   ASSERT_TRUE(space.is_solution(answer));
 }
