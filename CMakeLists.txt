@@ -41,8 +41,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
 enable_testing()
 
-include_directories(${GTEST_INCLUDE_DIRS})
-include_directories(${RAPIDCHECK_INCLUDE_DIRS})
+include_directories(SYSTEM ${GTEST_INCLUDE_DIRS})
+include_directories(SYSTEM ${RAPIDCHECK_INCLUDE_DIRS})
 
 file(GLOB_RECURSE CMAKEFILES **/CMakeLists.txt)
 foreach(CMAKEFILE ${CMAKEFILES})
