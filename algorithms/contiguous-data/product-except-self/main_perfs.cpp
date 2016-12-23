@@ -10,6 +10,6 @@ int main(int /*argc*/, char** /*argv*/)
   auto out = product_except(in);
   
   bool success = out[1] == 0;
-  return success;
+  return !success;
 }
 

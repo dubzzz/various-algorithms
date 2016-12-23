@@ -11,6 +11,6 @@ int main(int /*argc*/, char** /*argv*/)
   }
   //std::cout << out;
   bool success = out == unsigned(223222785);
-  return success;
+  return !success;
 }
 
