@@ -26,7 +26,7 @@ struct GAssert
 };
 struct RcAssert
 {
-  static inline bool expect(bool condition, std::string const& msg) { RC_ASSERT(condition); return condition; };
+  static inline bool expect(bool condition, std::string const& /*msg*/) { RC_ASSERT(condition); return condition; };
 };
 
 // Running tests

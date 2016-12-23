@@ -1,7 +1,7 @@
 //#include <iostream>
 unsigned most_significant_position(unsigned);
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char** /*argv*/)
 {
   unsigned out {};
   constexpr unsigned num_runs = 1e7;

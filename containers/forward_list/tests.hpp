@@ -377,12 +377,12 @@ using forward_list_command = rc::state::Command<forward_list_model, forward_list
 
 struct cIteratorTransformAll : forward_list_command
 {
-  void checkPreconditions(forward_list_model const& m) const override {}
+  void checkPreconditions(forward_list_model const& /*m*/) const override {}
   void apply(forward_list_model& m) const override
   {
     std::transform(m.content.begin(), m.content.end(), m.content.begin(), [](RefData const& data){return RefData(data.b, data.a);});
   }
-  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  void run(forward_list_model const& /*m*/, forward_list<FwdData>& l) const override
   {
     std::size_t num_before = FwdData::instances();
     std::transform(l.begin(), l.end(), l.begin(), [](FwdData const& data){return FwdData(data.b, data.a);});
@@ -400,7 +400,7 @@ struct cPushFront : forward_list_command
     RefData elt(v1, v2);
     m.content.push_back(elt);
   }
-  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  void run(forward_list_model const& /*m*/, forward_list<FwdData>& l) const override
   {
     std::size_t num_before = FwdData::instances();
     FwdData elt(v1, v2);
@@ -416,7 +416,7 @@ struct cEmplaceFront : forward_list_command
   int v2 = *rc::gen::inRange(0, 5);
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(m.content.size() < 1e5); }
   void apply(forward_list_model& m) const override { m.content.emplace_back(v1, v2); }
-  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  void run(forward_list_model const& /*m*/, forward_list<FwdData>& l) const override
   {
     std::size_t num_before = FwdData::instances();
     l.emplace_front(v1, v2);
@@ -428,7 +428,7 @@ struct cEmplaceFront : forward_list_command
 struct cFront : forward_list_command
 {
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(! m.content.empty()); }
-  void apply(forward_list_model& m) const override {}
+  void apply(forward_list_model& /*m*/) const override {}
   void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
     RC_ASSERT(m.content.back().a == l.front().a);
@@ -440,7 +440,7 @@ struct cPopFront : forward_list_command
 {
   void checkPreconditions(forward_list_model const& m) const override { RC_PRE(! m.content.empty()); }
   void apply(forward_list_model& m) const override { m.content.pop_back(); }
-  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  void run(forward_list_model const& /*m*/, forward_list<FwdData>& l) const override
   {
     std::size_t num_before = FwdData::instances();
     l.pop_front();
@@ -450,8 +450,8 @@ struct cPopFront : forward_list_command
 };
 struct cEmpty : forward_list_command
 {
-  void checkPreconditions(forward_list_model const& m) const override {}
-  void apply(forward_list_model& m) const override {}
+  void checkPreconditions(forward_list_model const& /*m*/) const override {}
+  void apply(forward_list_model& /*m*/) const override {}
   void run(forward_list_model const& m, forward_list<FwdData>& l) const override
   {
     RC_ASSERT(l.empty() == m.content.empty());
@@ -461,9 +461,9 @@ struct cEmpty : forward_list_command
 };
 struct cClear : forward_list_command
 {
-  void checkPreconditions(forward_list_model const& m) const override {}
+  void checkPreconditions(forward_list_model const& /*m*/) const override {}
   void apply(forward_list_model& m) const override { m.content.clear(); }
-  void run(forward_list_model const& m, forward_list<FwdData>& l) const override
+  void run(forward_list_model const& /*m*/, forward_list<FwdData>& l) const override
   {
     l.clear();
     RC_ASSERT(l.empty());

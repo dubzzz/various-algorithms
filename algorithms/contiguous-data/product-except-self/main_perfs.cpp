@@ -2,7 +2,7 @@
 #include <vector>
 std::vector<int> product_except(std::vector<int> const&);
 
-int main(int argc, char **argv)
+int main(int /*argc*/, char** /*argv*/)
 {
   constexpr unsigned num_entries = 1e7;
   std::vector<int> in(num_entries);
