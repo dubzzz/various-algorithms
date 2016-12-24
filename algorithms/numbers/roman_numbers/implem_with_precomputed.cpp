@@ -98,30 +98,40 @@ constexpr auto to_roman_str(int value)
   return to_roman_str_impl(value, std::make_integer_sequence<int, 2 * max_roman +1>());
 }
 
-std::map<char, int> build_by_letters()
+template <std::size_t I> constexpr int build_one_letter()
 {
-  std::map<char, int> reversed;
-  std::transform(std::begin(letters_value), std::end(letters_value)
-      , std::inserter(reversed, std::begin(reversed))
-      , [](auto const& p) { return std::make_pair(p.second, p.first); });
-  return reversed;
+  char letter = static_cast<char>(I + 'A');
+  int val {};
+  for (auto const& p : letters_value)
+  {
+    if (p.second == letter)
+    {
+      return p.first;
+    }
+  }
+  return val;
 }
 
-int from_roman_str(std::string const& expr)
+template <std::size_t... I> constexpr int from_roman_str_impl(const char* expr, std::index_sequence<I...>)
 {
-  static std::map<char, int> by_letters = build_by_letters();
-  
-  if (expr[0] == '0')
+  constexpr int by_letters[sizeof...(I)] = { build_one_letter<I>()... };
+  if (*expr == '0')
   {
     return 0;
   }
 
   int num {};
-  bool positive_sign = expr[0] != '-';
-  int current_val = letters_value[num_letters -1].first;
-  for (std::size_t pos = { positive_sign ? std::size_t() : std::size_t(1) } ; pos != expr.size() ; ++pos)
+  bool positive_sign = true;
+  if (*expr == '-')
   {
-    int prev_val = std::exchange(current_val, by_letters[expr[pos]]);
+    ++expr;
+    positive_sign = false;
+  }
+  int current_val = letters_value[num_letters -1].first;
+  for ( ; *expr ; ++expr)
+  {
+    int prev_val = current_val;
+    current_val = by_letters[*expr - 'A'];
     if (current_val > prev_val)
     {// eg.: CIX: 100 then 101 then 1? 101(num) - 2*1(prev_val) + 10(current_val)
       num += current_val - 2*prev_val;
@@ -132,6 +142,16 @@ int from_roman_str(std::string const& expr)
     }
   }
   return positive_sign ? num : -num;
+}
+
+constexpr int from_roman_str(const char* expr)
+{
+  return from_roman_str_impl(expr, std::make_index_sequence<26>());
+}
+
+int from_roman_str(std::string const& expr)
+{
+  return from_roman_str(expr.c_str());
 }
 
 #include "tests.hpp"
