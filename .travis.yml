@@ -39,17 +39,6 @@ matrix:
             - clang-3.7
       env: COMPILER=clang++-3.7
 
-addons:
-  apt:
-    sources:
-    - ubuntu-toolchain-r-test
-    - llvm-toolchain-precise-3.6
-    packages:
-    # install toolchains
-    - gcc-5
-    - g++-5
-    - clang-3.6
-
 os:
 - linux
 
