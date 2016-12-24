@@ -5,6 +5,13 @@
 The aim of this repository is to test and make use of the new possibilities offered by new releases of C++.
 These capabilities are evaluated accross various classical implementations and algorithms.
 
+It also wants to make use of:
+- modern test frameworks (GTest, property-based testing using RapidCheck)
+- continuous integration
+- static analysis
+- memory profiling
+- leaks detection
+
 ## Minimum requirements
 
 - CMake 2.8.8
