@@ -13,14 +13,25 @@ set(RAPIDCHECK_PATH rapidcheck)
 set(RAPIDCHECK_INCLUDE_DIRS ${RAPIDCHECK_PATH}/include ${RAPIDCHECK_PATH}/extras/gtest/include)
 add_subdirectory(${RAPIDCHECK_PATH})
 
-option(USE_CLANG "build binaries using clang" OFF)
-option(USE_GCC "build binaries using g++" OFF)
-if (USE_CLANG MATCHES "ON")
-  set(CMAKE_C_COMPILER "clang" CACHE string "clang compiler" FORCE)
-  set(CMAKE_CXX_COMPILER "clang++" CACHE string "clang++ compiler" FORCE)
-elseif (USE_GCC MATCHES "ON")
-  set(CMAKE_C_COMPILER "gcc" CACHE string "gcc compiler" FORCE)
-  set(CMAKE_CXX_COMPILER "g++" CACHE string "g++ compiler" FORCE)
+# Hint for compiler switch:
+# - CLANG:
+#   export CC=/usr/bin/clang
+#   export CXX=/usr/bin/clang++
+# - G++:
+#   export CC=/usr/bin/gcc
+#   export CXX=/usr/bin/g++
+
+set(CUSTOM_DEFINES "")
+if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.1)
+    message(STATUS "g++ <5.1 does not support C++14 constexpr")
+    set(CUSTOM_DEFINES "${CUSTOM_DEFINES} -DNO_SUPPORT_CONSTEXPR_CXX14")
+  endif()
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+  if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 3.4)
+    message(FATAL_ERROR "clang <3.4 does not support C++14 constexpr")
+    set(CUSTOM_DEFINES "${CUSTOM_DEFINES} -DNO_SUPPORT_CONSTEXPR_CXX14")
+  endif()
 endif()
 
 include(CheckCXXCompilerFlag)
@@ -35,8 +46,8 @@ if (COMPILER_SUPPORTS_CXX14)
 elseif (COMPILER_SUPPORTS_CXX1Y)
   set(CXX14 "-std=c++1y")
 endif()
-set(CMAKE_CXX_FLAGS "${CXX14} -Wall -pthread")
 
+set(CMAKE_CXX_FLAGS "${CUSTOM_DEFINES} ${CXX14} -Wall -Wextra -Werror -Wno-error=cpp -pthread -ftemplate-depth=10000")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build)
 
 enable_testing()

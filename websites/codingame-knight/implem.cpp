@@ -6,7 +6,7 @@
 
 template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space(Space<DIM, T>& space)
 {
-  std::array<std::size_t, DIM> min_ext {};
+  std::array<std::size_t, DIM> min_ext;
   std::array<std::size_t, DIM> max_ext = space.dimensions();
   
   while (true)

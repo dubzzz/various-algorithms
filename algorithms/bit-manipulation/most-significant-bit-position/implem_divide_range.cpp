@@ -1,10 +1,6 @@
-#if (defined(__clang__) && (__clang_major__ < 3 || (__clang_major__ == 3 && __clang_minor__ < 4))) || \
-    (! defined(__clang__) && defined(__GNUC__)  && (__GNUC__        < 5 || (__GNUC__        == 5 && __GNUC_MINOR__  < 1)))
-#   define NO_CONSTEXPR
-#endif
-
-#if defined(NO_CONSTEXPR)
+#if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   define __CONSTEXPR__
+#   define NO_CONSTEXPR
 #else
 #   define __CONSTEXPR__ constexpr
 #endif
@@ -46,7 +42,7 @@ __CONSTEXPR__ unsigned most_significant_position(unsigned num)
 
 #include "tests.hpp"
 
-#if defined(NO_CONSTEXPR)
+#if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   warning "Constexpr tests have been disabled for this compiler"
 #   warning "requirement: compiler compatible with C++14's constexpr"
 #endif

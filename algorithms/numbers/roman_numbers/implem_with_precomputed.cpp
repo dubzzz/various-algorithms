@@ -1,3 +1,10 @@
+#if defined(NO_SUPPORT_CONSTEXPR_CXX14)
+#   define __CONSTEXPR__
+#   define NO_CONSTEXPR
+#else
+#   define __CONSTEXPR__ constexpr
+#endif
+
 #include <algorithm>
 #include <iterator>
 #include <map>
@@ -17,31 +24,23 @@ template <std::size_t N> class ccstring
 {
   char roman_repr[N];
 public:
-  constexpr ccstring() : roman_repr() {}
-  constexpr ccstring(const char (&tab)[N]) : roman_repr()
+  __CONSTEXPR__ ccstring() : roman_repr() {}
+  __CONSTEXPR__ ccstring(const char (&tab)[N]) : roman_repr()
   {
     for (std::size_t i {} ; i != N ; ++i)
     {
       roman_repr[i] = tab[i];
     }
   }
-  constexpr char const* begin() const { return roman_repr; }
-  constexpr char const* end() const { return roman_repr + N; }
-  constexpr char& operator[](std::size_t idx)
-  {
-    return roman_repr[idx];
-  }
-  constexpr const char* value() const
-  {
-    return roman_repr;
-  }
-  operator std::string() const
-  {
-    return roman_repr;
-  }
+  __CONSTEXPR__ char const* begin() const { return roman_repr; }
+  __CONSTEXPR__ char const* end() const { return roman_repr + N; }
+  __CONSTEXPR__ char& operator[](std::size_t idx) { return roman_repr[idx]; }
+  __CONSTEXPR__ char const& operator[](std::size_t idx) const { return roman_repr[idx]; }
+  __CONSTEXPR__ const char* value() const { return roman_repr; }
+  operator std::string() const { return roman_repr; }
 };
 
-template <int _value> constexpr auto build_roman_str_impl()
+template <int _value> __CONSTEXPR__ auto build_roman_str_impl()
 {
   int value { _value };
   ccstring<max_roman_length> repr;
@@ -82,18 +81,18 @@ template <int _value> constexpr auto build_roman_str_impl()
   return repr;
 }
 
-template <int I> constexpr auto build_roman_str_offset_impl()
+template <int I> __CONSTEXPR__ auto build_roman_str_offset_impl()
 {
   return build_roman_str_impl<I-static_cast<int>(max_roman)>();
 }
 
-template <int... I> constexpr auto to_roman_str_impl(int value, std::integer_sequence<int, I...>)
+template <int... I> __CONSTEXPR__ ccstring<max_roman_length> to_roman_str_impl(int value, std::integer_sequence<int, I...>)
 {
-  constexpr const ccstring<max_roman_length> tab[] = { build_roman_str_offset_impl<I>()... };
+  __CONSTEXPR__ const ccstring<max_roman_length> tab[] = { build_roman_str_offset_impl<I>()... };
   return tab[value + max_roman];
 }
 
-constexpr auto to_roman_str_constexpr(int value)
+__CONSTEXPR__ auto to_roman_str_constexpr(int value)
 {
   return to_roman_str_impl(value, std::make_integer_sequence<int, 2 * max_roman +1>());
 }
@@ -103,7 +102,7 @@ std::string to_roman_str(int value)
   return static_cast<std::string>(to_roman_str_constexpr(value));
 }
 
-template <std::size_t I> constexpr int build_one_letter()
+template <std::size_t I> __CONSTEXPR__ int build_one_letter()
 {
   char letter = static_cast<char>(I + 'A');
   int val {};
@@ -117,9 +116,9 @@ template <std::size_t I> constexpr int build_one_letter()
   return val;
 }
 
-template <std::size_t... I> constexpr int from_roman_str_impl(const char* expr, std::index_sequence<I...>)
+template <std::size_t... I> __CONSTEXPR__ int from_roman_str_impl(const char* expr, std::index_sequence<I...>)
 {
-  constexpr int by_letters[sizeof...(I)] = { build_one_letter<I>()... };
+  __CONSTEXPR__ int by_letters[sizeof...(I)] = { build_one_letter<I>()... };
   if (*expr == '0')
   {
     return 0;
@@ -149,7 +148,7 @@ template <std::size_t... I> constexpr int from_roman_str_impl(const char* expr, 
   return positive_sign ? num : -num;
 }
 
-constexpr int from_roman_str(const char* expr)
+__CONSTEXPR__ int from_roman_str(const char* expr)
 {
   return from_roman_str_impl(expr, std::make_index_sequence<26>());
 }
@@ -160,4 +159,9 @@ int from_roman_str(std::string const& expr)
 }
 
 #include "tests.hpp"
+
+#if defined(NO_SUPPORT_CONSTEXPR_CXX14)
+#   warning "Constexpr tests have been disabled for this compiler"
+#   warning "requirement: compiler compatible with C++14's constexpr"
+#endif
 
