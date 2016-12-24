@@ -1,4 +1,5 @@
 language: cpp
+os: linux
 dist: trusty
 sudo: required
 
@@ -39,10 +40,15 @@ matrix:
             - clang-3.7
       env: COMPILER=clang++-3.7
 
-os:
-- linux
+install:
+  - sudo apt-get install libgtest-dev
+  - cd /usr/src/gtest
+  - sudo cmake .
+  - sudo make
+  - sudo mv libgtest* /usr/lib/
+  - cd "${TRAVIS_BUILD_DIR}"
 
 script:
-- cmake .
-- make -j4
-- make test ARGS="-V"
+  - cmake .
+  - make -j4
+  - make test ARGS="-V"
