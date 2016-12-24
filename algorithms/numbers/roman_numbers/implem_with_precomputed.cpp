@@ -93,9 +93,14 @@ template <int... I> constexpr auto to_roman_str_impl(int value, std::integer_seq
   return tab[value + max_roman];
 }
 
-constexpr auto to_roman_str(int value)
+constexpr auto to_roman_str_constexpr(int value)
 {
   return to_roman_str_impl(value, std::make_integer_sequence<int, 2 * max_roman +1>());
+}
+
+std::string to_roman_str(int value)
+{
+  return static_cast<std::string>(to_roman_str_constexpr(value));
 }
 
 template <std::size_t I> constexpr int build_one_letter()
