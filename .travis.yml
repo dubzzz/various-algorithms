@@ -1,0 +1,14 @@
+language: cpp
+sudo: required
+
+compiler:
+- clang
+- g++
+
+os:
+- linux
+
+script:
+- cmake .
+- make -j4
+- make test ARGS="-V"
