@@ -20,7 +20,7 @@
 
 // Algorithm to be tested
 // int from_roman_str(std::string const&°
-// std::string to_roman_str(int)
+// std::string to_roman_str(int)  -- must return something convertible into std::string
 
 // If your algorithm does not apply for all the possible characters defined into checks::letters_value (below)
 // You can override the number of letters selected by using the macro LIMIT_TO_X_LETTERS
@@ -29,7 +29,7 @@ namespace checks {
 
 static constexpr std::pair<int, char> letters_value[] = { {1,'I'}, {5,'V'}, {10, 'X'}, {50, 'L'}, {100, 'C'}, {500, 'D'}, {1000, 'M'} };
 #if defined(LIMIT_TO_X_LETTERS)
-# warning "Number of roman characters have been limited"
+//# warning "Number of roman characters have been limited"
   static constexpr std::size_t num_letters = LIMIT_TO_X_LETTERS;
 #else
   static constexpr std::size_t num_letters = sizeof(letters_value)/sizeof(std::pair<int, char>);
@@ -92,39 +92,39 @@ TEST(TEST_NAME, FromRoman_MultiplePositiveNumbers)
 
 TEST(TEST_NAME, ToRoman_Zero)
 {
-  ASSERT_EQ("0", to_roman_str(0));
+  ASSERT_EQ("0", static_cast<std::string>(to_roman_str(0)));
 }
 
 TEST(TEST_NAME, ToRoman_PositiveNumber)
 {
-  ASSERT_EQ("XIV", to_roman_str(14));
+  ASSERT_EQ("XIV", static_cast<std::string>(to_roman_str(14)));
 }
 
 TEST(TEST_NAME, ToRoman_NegativeNumber)
 {
-  ASSERT_EQ("-IX", to_roman_str(-9));
+  ASSERT_EQ("-IX", static_cast<std::string>(to_roman_str(-9)));
 }
 
 TEST(TEST_NAME, ToRoman_MultiplePositiveNumbers)
 {
   if (num_letters >= 3)
   {
-    ASSERT_EQ("I", to_roman_str(1));
-    ASSERT_EQ("XXXVI", to_roman_str(36));
-    ASSERT_EQ("XXXIX", to_roman_str(39));
+    ASSERT_EQ("I", static_cast<std::string>(to_roman_str(1)));
+    ASSERT_EQ("XXXVI", static_cast<std::string>(to_roman_str(36)));
+    ASSERT_EQ("XXXIX", static_cast<std::string>(to_roman_str(39)));
   }
   if (num_letters >= 5)
   {
-    ASSERT_EQ("LI", to_roman_str(51));
-    ASSERT_EQ("XLII", to_roman_str(42));
-    ASSERT_EQ("CXCI", to_roman_str(191));
-    ASSERT_EQ("CCCXCIX", to_roman_str(399));
+    ASSERT_EQ("LI", static_cast<std::string>(to_roman_str(51)));
+    ASSERT_EQ("XLII", static_cast<std::string>(to_roman_str(42)));
+    ASSERT_EQ("CXCI", static_cast<std::string>(to_roman_str(191)));
+    ASSERT_EQ("CCCXCIX", static_cast<std::string>(to_roman_str(399)));
   }
   if (num_letters >= 7)
   {
-    ASSERT_EQ("CDXCIX", to_roman_str(499));
-    ASSERT_EQ("DLVII", to_roman_str(557));
-    ASSERT_EQ("MMMCMXCIX", to_roman_str(3999));
+    ASSERT_EQ("CDXCIX", static_cast<std::string>(to_roman_str(499)));
+    ASSERT_EQ("DLVII", static_cast<std::string>(to_roman_str(557)));
+    ASSERT_EQ("MMMCMXCIX", static_cast<std::string>(to_roman_str(3999)));
   }
 }
 
@@ -132,14 +132,16 @@ RC_GTEST_PROP(TEST_NAME, Property_ToThenFrom_IsIdentity, ())
 {
   auto generator = rc::gen::inRange(-static_cast<int>(max_roman), static_cast<int>(max_roman));
   int N = *generator;
-  RC_ASSERT(from_roman_str(to_roman_str(N)) == N);
+  auto out_to = static_cast<std::string>(to_roman_str(N));
+  RC_ASSERT(from_roman_str(out_to) == N);
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_ToRoman_ReturnNotEmpty, ())
 {
   auto generator = rc::gen::inRange(-static_cast<int>(max_roman), static_cast<int>(max_roman));
   int N = *generator;
-  RC_ASSERT(to_roman_str(N).size() > std::size_t());
+  auto out = static_cast<std::string>(to_roman_str(N));
+  RC_ASSERT(out.size() > std::size_t());
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_ToRoman_IsSurjective, ())
@@ -148,27 +150,30 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_IsSurjective, ())
   int a = *generator;
   int b = *generator;
   RC_PRE(a != b);
-  RC_ASSERT(to_roman_str(a) != to_roman_str(b));
+  auto out_a = static_cast<std::string>(to_roman_str(a));
+  auto out_b = static_cast<std::string>(to_roman_str(b));
+  RC_ASSERT(out_a != out_b);
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_ToRoman_NegativeStartByMinus, ())
 {
   auto generator = rc::gen::inRange(-static_cast<int>(max_roman), -1);
   int N = *generator;
-  RC_ASSERT(to_roman_str(N)[0] == '-');
+  auto out = static_cast<std::string>(to_roman_str(N));
+  RC_ASSERT(out[0] == '-');
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_ToRoman_ProducesOnlyAllowedCharacters, ())
 {
   auto generator = rc::gen::inRange(1, static_cast<int>(max_roman));
   int N = *generator;
-  
+
   std::set<char> allowed_chars;
   std::transform(std::begin(letters_value), std::next(std::begin(letters_value), num_letters)
       , std::inserter(allowed_chars, std::begin(allowed_chars))
       , [](auto const& p) { return p.second; });
-  
-  auto out = std::string{ to_roman_str(N) };
+
+  auto out = static_cast<std::string>(to_roman_str(N));
   RC_ASSERT(std::find_if(std::begin(out), std::end(out)
       , [allowed_chars](auto c) { return allowed_chars.find(c) == allowed_chars.end(); }) == std::end(out));
 }
@@ -177,14 +182,16 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_NegativeIsPositiveWithMinus, ())
 {
   auto generator = rc::gen::inRange(1, static_cast<int>(max_roman));
   int N = *generator;
-  RC_ASSERT(to_roman_str(-N) == "-" + to_roman_str(N));
+  auto out_minus = static_cast<std::string>(to_roman_str(-N));
+  auto out_plus = static_cast<std::string>(to_roman_str(N));
+  RC_ASSERT(out_minus == "-" + out_plus);
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_ToRoman_GoodOrdering, ())
 {
   auto generator = rc::gen::inRange(1, static_cast<int>(max_roman));
   int N = *generator;
-  
+
   std::map<char, std::set<char>> can_be_preceded_bys;
   for (std::size_t idx {} ; idx != num_letters ; ++idx)
   {
@@ -198,10 +205,10 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_GoodOrdering, ())
     }
     can_be_preceded_bys[letters_value[idx].second] = can_precede_it;
   }
-  
-  auto out = std::string{ to_roman_str(N) };
+
+  auto out = static_cast<std::string>(to_roman_str(N));
   RC_PRE(out.size() > std::size_t(1));
-  
+
   std::vector<bool> wrong_ordering;
   std::transform(std::begin(out), std::prev(std::end(out))
       , std::next(std::begin(out))
@@ -217,8 +224,8 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_NotTooManyTimesTheSameCharacter, ())
 {
   auto generator = rc::gen::inRange(1, static_cast<int>(max_roman));
   int N = *generator;
-  
-  auto out = std::string{ to_roman_str(N) };
+
+  auto out = static_cast<std::string>(to_roman_str(N));
   for (std::size_t idx {} ; idx != num_letters ; ++idx)
   {
     RC_ASSERT(std::count(std::begin(out), std::end(out), letters_value[idx].second) <= (idx%2
@@ -232,7 +239,8 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_SizeIsNotTooLong, ())
 {
   auto generator = rc::gen::inRange(-static_cast<int>(max_roman), static_cast<int>(max_roman));
   int N = *generator;
-  RC_ASSERT(to_roman_str(N).size() < max_roman_length);
+  auto out = static_cast<std::string>(to_roman_str(N));
+  RC_ASSERT(out.size() < max_roman_length);
 }
 
 RC_GTEST_PROP(TEST_NAME, Property_FromRoman_TestOnSimpleRomanStrings, ())
@@ -242,7 +250,7 @@ RC_GTEST_PROP(TEST_NAME, Property_FromRoman_TestOnSimpleRomanStrings, ())
   {
     choices[0] = 1;
   }
-  
+
   std::string roman_repr;
   int expected {};
   for (std::size_t ridx {} ; ridx != num_letters ; ++ridx)
