@@ -7,18 +7,18 @@ addons_shortcuts:
   addons_clang39: &clang39
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.9']
-      packages: ['clang++-3.9', 'clang-3.9', 'cmake', 'cmake-data', 'libgtest-dev']
+      packages: ['clang++-3.9', 'cmake', 'cmake-data', 'libgtest-dev']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
-      packages: ['g++-4.9', 'gcc-4.9', 'cmake', 'cmake-data', 'libgtest-dev']
+      packages: ['g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev']
 
 matrix:
   include:
     - os: linux
       compiler: "clang-3.9"
       env: CC=clang-3.9 CXX=clang++-3.9 CXX_STD=c++14
-      addons: *clang39M
+      addons: *clang39
     - os: linux
       compiler: "g++-4.9"
       env: CC=gcc-4.9 CXX=g++-4.9 CXX_STD=c++14
