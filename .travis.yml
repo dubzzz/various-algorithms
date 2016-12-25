@@ -4,10 +4,10 @@ sudo: false
 # List of apt packages available from Travis CI
 # can be found at: https://github.com/travis-ci/apt-package-whitelist
 addons_shortcuts:
-  addons_clang39: &clang39
+  addons_clang35: &clang35
     apt:
-      sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.9']
-      packages: ['clang-3.9', 'cmake', 'cmake-data', 'libgtest-dev']
+      sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.5']
+      packages: ['clang-3.5', 'cmake', 'cmake-data', 'libgtest-dev']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
@@ -15,10 +15,11 @@ addons_shortcuts:
 
 matrix:
   include:
+    # Debian 8 Jessie, default setup: clang-3.5, g++-4.9
     - os: linux
       compiler: clang
-      env: COMPILER_VERSION=3.9
-      addons: *clang39
+      env: COMPILER_VERSION=3.5
+      addons: *clang35
     - os: linux
       compiler: gcc
       env: COMPILER_VERSION=4.9
@@ -35,7 +36,6 @@ install:
   - cd -
 
 script:
-  - ls -alhR ~/gtest
   - export GTEST_ROOT="~/gtest"
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
