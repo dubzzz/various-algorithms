@@ -36,10 +36,11 @@ install:
   - cd -
 
 script:
+  - export GTEST_COLOR=1
   - export GTEST_ROOT="~/gtest"
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
   - export CXX_STD="c++14"
   - cmake .
   - make -j4
-  - make test ARGS="-V"
+  - ctest -VV
