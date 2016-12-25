@@ -33,6 +33,9 @@ install:
   - cd -
 
 script:
+  - ls -alhR ~/gtest
+  - export GTEST_LIBRARY="~/gtest/libgtest.a"
+  - export GTEST_MAIN_LIBRARY="~/gtest/libgtest_main.a"
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
   - export CXX_STD="c++14"
