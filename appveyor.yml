@@ -14,7 +14,7 @@ install:
 - git clone https://github.com/google/googletest.git
 - cd googletest
 - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
-- cmake -G "NMake Makefiles" .
+- cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
 - nmake
 - mkdir googletest\lib
 - copy googlemock\gtest\gtest.lib googletest\lib
@@ -24,7 +24,7 @@ install:
 
 build_script:
 - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
-- cmake -G "NMake Makefiles" .
+- cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
 - nmake
 
 test_script:
