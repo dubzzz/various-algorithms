@@ -12,9 +12,8 @@ install:
 - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
 - cmake -G "NMake Makefiles" .
 - nmake
-- dir /S
 - mkdir googletest\lib
-- cp gtest* googletest\lib
+- cp googlemock\gtest\gtest* googletest\lib
 - set GTEST_ROOT=%cd%\googletest
 - cd ..
 - git submodule update --init --recursive
