@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <array>
 
 #include "space.hpp"
@@ -7,6 +8,7 @@
 template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space(Space<DIM, T>& space)
 {
   std::array<std::size_t, DIM> min_ext;
+  std::fill(std::begin(min_ext), std::end(min_ext), std::size_t());
   std::array<std::size_t, DIM> max_ext = space.dimensions();
   
   while (true)
