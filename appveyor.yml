@@ -13,7 +13,8 @@ install:
 - cmake -G "NMake Makefiles" .
 - nmake
 - mkdir googletest\lib
-- cp googlemock\gtest\gtest* googletest\lib
+- copy googlemock\gtest\gtest.lib googletest\lib
+- copy googlemock\gtest\gtest_main.lib googletest\lib
 - set GTEST_ROOT=%cd%\googletest
 - cd ..
 - git submodule update --init --recursive
