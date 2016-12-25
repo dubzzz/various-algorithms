@@ -1,4 +1,4 @@
-# Various Algorithms
+# Various Algorithms [![Build Status](https://travis-ci.org/dubzzz/various-algorithms.svg?branch=master)](https://travis-ci.org/dubzzz/various-algorithms)
 
 ## Aim of this repository
 
