@@ -7,7 +7,7 @@ addons_shortcuts:
   addons_clang39: &clang39
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.9']
-      packages: ['clang++-3.9', 'cmake', 'cmake-data', 'libgtest-dev']
+      packages: ['clang-3.9', 'cmake', 'cmake-data', 'libgtest-dev']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
@@ -16,23 +16,26 @@ addons_shortcuts:
 matrix:
   include:
     - os: linux
-      compiler: "clang-3.9"
-      env: CC=clang-3.9 CXX=clang++-3.9 CXX_STD=c++14
+      compiler: clang
+      env: COMPILER_VERSION=3.9
       addons: *clang39
     - os: linux
-      compiler: "g++-4.9"
-      env: CC=gcc-4.9 CXX=g++-4.9 CXX_STD=c++14
+      compiler: gcc
+      env: COMPILER_VERSION=4.9
       addons: *gcc49
 
-before_install:
-  - mkdir gtest-build
-  - mkdir build/
-  - pushd gtest-build
-  - cmake /usr/src/gtest
+install: 
+  - mkdir ~/gtest && cd ~/gtest
+  - export LIBRARY_PATH=$(pwd)
+  - cp -r /usr/src/gtest/* ./
+  - cmake -D CMAKE_INSTALL_PREFIX:PATH=./ ./
   - make
-  - popd
+  - cd -
 
 script:
+  - export CC="${CC}-${COMPILER_VERSION}"
+  - export CXX="${CXX}-${COMPILER_VERSION}"
+  - export CXX_STD="c++14"
   - cmake .
   - make -j4
   - make test ARGS="-V"
