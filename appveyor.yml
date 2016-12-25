@@ -7,22 +7,15 @@ environment:
   - ARCH: x86
 
 install:
-- set ORIGIN_PATH=%cd%
+- cmd: echo "Downloading conan..."
+- cmd: set PATH=%PATH%;%PYTHON%/Scripts/
+- cmd: pip.exe install conan
+- cmd: conan user # Create the conan data directory
+- cmd: conan --version
 - git submodule update --init --recursive
-- mkdir c:\projects\deps
-- cd c:\projects\deps
-- git clone https://github.com/google/googletest.git
-- cd googletest
-- "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
-- cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
-- nmake
-- mkdir googletest\lib
-- copy googlemock\gtest\gtest.lib googletest\lib
-- copy googlemock\gtest\gtest_main.lib googletest\lib
-- set GTEST_ROOT=%cd%\googletest
-- cd %ORIGIN_PATH%
 
 build_script:
+- cmd: conan install -o gtest:shared=True
 - "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
 - cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
 - nmake
