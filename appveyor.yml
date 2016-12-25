@@ -7,25 +7,24 @@ environment:
   - ARCH: x86
 
 install:
+- set BUILD_TYPE=Debug
 - set ORIGIN_PATH=%cd%
 - git submodule update --init --recursive
 - mkdir c:\projects\deps
 - cd c:\projects\deps
 - git clone https://github.com/google/googletest.git
 - cd googletest
-- "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
-- cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
-- nmake
+- cmake -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -G "Visual Studio 14 2015" .
+- cmake --build .
 - mkdir googletest\lib
-- copy googlemock\gtest\gtest.lib googletest\lib
-- copy googlemock\gtest\gtest_main.lib googletest\lib
+- copy googlemock\gtest\%BUILD_TYPE%\gtest.lib googletest\lib
+- copy googlemock\gtest\%BUILD_TYPE%\gtest_main.lib googletest\lib
 - set GTEST_ROOT=%cd%\googletest
 - cd %ORIGIN_PATH%
 
 build_script:
-- "\"C:\\Program Files (x86)\\Microsoft Visual Studio 14.0\\VC\\vcvarsall.bat\" %ARCH%"
-- cmake -DCMAKE_BUILD_TYPE=Release -G "NMake Makefiles" .
-- nmake
+- cmake -DCMAKE_BUILD_TYPE=%BUILD_TYPE% -G "Visual Studio 14 2015" .
+- cmake --build .
 
 test_script:
 - ctest -VV

@@ -39,3 +39,13 @@ cmake_install.cmake
 install_manifest.txt
 CTestTestfile.cmake
 Testing
+
+# Visual Studio
+*.vcxproj
+*.vcxproj.filters
+*.dir/
+*.VC.db
+*.sln
+.vs/
+Debug/
+Release/
