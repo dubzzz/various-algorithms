@@ -30,12 +30,13 @@ install:
   - cp -r /usr/src/gtest/* ./
   - cmake -D CMAKE_INSTALL_PREFIX:PATH=./ ./
   - make
+  - mkdir include && cp -r /usr/include/gtest include
+  - mkdir lib && cp libgtest* lib
   - cd -
 
 script:
   - ls -alhR ~/gtest
-  - export GTEST_LIBRARY="~/gtest/libgtest.a"
-  - export GTEST_MAIN_LIBRARY="~/gtest/libgtest_main.a"
+  - export GTEST_ROOT="~"
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
   - export CXX_STD="c++14"
