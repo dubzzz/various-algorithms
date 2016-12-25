@@ -1,6 +1,8 @@
 language: cpp
 sudo: required
 
+# List of apt packages available from Travis CI
+# can be found at: https://github.com/travis-ci/apt-package-whitelist
 addons_shortcuts:
   addons_clang39: &clang39
     apt:
@@ -21,9 +23,6 @@ matrix:
       compiler: "g++-4.9"
       env: CC=gcc-4.9 CXX=g++-4.9 CXX_STD=c++14
       addons: *gcc49
-
-before_install:
-  - echo "Building using C++ compiler: ${CXX}"
 
 install:
   - sudo apt-get install libgtest-dev
