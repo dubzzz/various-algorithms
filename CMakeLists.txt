@@ -24,7 +24,7 @@ add_subdirectory(${RAPIDCHECK_PATH})
 #   export CXX=/usr/bin/g++
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=cpp")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=cpp -Wno-error=unknown-pragmas")
   if (CMAKE_CXX_COMPILER_VERSION VERSION_LESS 5.1)
     message(STATUS "g++ <5.1 does not support C++14 constexpr")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DNO_SUPPORT_CONSTEXPR_CXX14")
