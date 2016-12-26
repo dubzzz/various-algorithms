@@ -161,7 +161,7 @@ int from_roman_str(std::string const& expr)
 #include "tests.hpp"
 
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
-#   warning "Constexpr tests have been disabled for this compiler"
-#   warning "requirement: compiler compatible with C++14's constexpr"
+#   pragma message("warning - constexpr tests have been disabled for this compiler")
+#   pragma message("warning - requirement: compiler compatible with C++14's constexpr")
 #endif
 

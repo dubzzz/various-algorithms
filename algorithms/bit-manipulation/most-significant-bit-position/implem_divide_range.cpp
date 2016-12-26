@@ -43,7 +43,7 @@ __CONSTEXPR__ unsigned most_significant_position(unsigned num)
 #include "tests.hpp"
 
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
-#   warning "Constexpr tests have been disabled for this compiler"
-#   warning "requirement: compiler compatible with C++14's constexpr"
+#   pragma ("warning - constexpr tests have been disabled for this compiler")
+#   pragma ("warning - requirement: compiler compatible with C++14's constexpr")
 #endif
 

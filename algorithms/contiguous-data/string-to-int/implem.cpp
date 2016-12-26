@@ -65,7 +65,7 @@ auto string_to_longlong(std::string const& expression, unsigned base=10) { retur
 #include "tests.hpp"
 
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
-#   warning "Constexpr tests have been disabled for this compiler"
-#   warning "requirement: compiler compatible with C++14's constexpr"
+#   pragma message("warning - constexpr tests have been disabled for this compiler")
+#   pragma message("warning - requirement: compiler compatible with C++14's constexpr")
 #endif
 

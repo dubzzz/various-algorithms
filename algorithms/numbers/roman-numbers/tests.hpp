@@ -29,7 +29,7 @@ namespace checks {
 
 static constexpr std::pair<int, char> letters_value[] = { {1,'I'}, {5,'V'}, {10, 'X'}, {50, 'L'}, {100, 'C'}, {500, 'D'}, {1000, 'M'} };
 #if defined(LIMIT_TO_X_LETTERS)
-//# warning "Number of roman characters have been limited"
+# pragma message("info - number of roman characters have been limited by implementation")
   static constexpr std::size_t num_letters = LIMIT_TO_X_LETTERS;
 #else
   static constexpr std::size_t num_letters = sizeof(letters_value)/sizeof(std::pair<int, char>);
