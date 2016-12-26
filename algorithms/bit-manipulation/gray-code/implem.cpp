@@ -27,7 +27,7 @@ std::vector<unsigned> build_grays(unsigned num)
     std::vector<unsigned> codes(2 * corresponding_pow(num));
   #else
     std::vector<unsigned> codes(1); //initial vector contains one entry
-    code.reserve(2 * corresponding_pow(num));
+    codes.reserve(2 * corresponding_pow(num));
     // Need to preallocate necessary memory in order to prevent from:
     // If the new size() is greater than capacity() then all iterators and references (including the past-the-end iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
   #endif
