@@ -17,16 +17,15 @@ unsigned corresponding_pow(unsigned num)
 
 std::vector<unsigned> build_grays(unsigned num)
 {
-  std::vector<unsigned> codes(1); //initial vector contains one entry
-  codes.reserve(2 * corresponding_pow(num));
+  std::vector<unsigned> codes(2 * corresponding_pow(num)); //initial vector contains one entry
   // Need to preallocate necessary memory in order to prevent from:
   // If the new size() is greater than capacity() then all iterators and references (including the past-the-end iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
   
   unsigned more = 1;
-  while (codes.size() < num)
+  while (more < num)
   {
-    std::transform(codes.rbegin(), codes.rend()
-        , std::back_inserter(codes)
+    std::transform(std::next(codes.rbegin(), codes.size() - more), codes.rend()
+        , std::next(codes.begin(), more)
         , [more](auto prev) {
             #ifdef DEBUG
               std::cout << std::bitset<8>(prev) << " + " << std::bitset<8>(more) << std::endl;
