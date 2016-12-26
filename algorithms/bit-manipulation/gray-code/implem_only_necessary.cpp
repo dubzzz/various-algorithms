@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <iterator>
 #include <vector>
 
 // Algorithm to be tested
