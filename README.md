@@ -17,5 +17,6 @@ It also wants to make use of:
 
 - CMake 2.8.8
 - Compiler compatible with C++14 (partial support might be enough)
- - G++ 5.1 or more (tested using 4.9 with flags removing missing features)
- - Clang 3.4 or more
+ - G++ 5.1 or later (tested using 4.9 with flags removing missing features)
+ - Clang 3.4 or later
+ - Visual Studio 14.0 2015 or later
