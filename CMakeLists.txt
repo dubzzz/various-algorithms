@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 2.8.8)
-
+if(POLICY CMP0054)
+  cmake_policy(SET CMP0054 NEW)
+endif()
 
 project(myProject C CXX)
 find_package(GTest REQUIRED)
