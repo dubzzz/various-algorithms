@@ -36,9 +36,10 @@ RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
 {
   RC_PRE(c1 != c2);
   
+  char moved_c1 = c1, moved_c2 = c2;
   std::string answer_str = *rc::gen::apply(
       [](auto&& vs) { return std::string(std::begin(vs), std::end(vs)); }
-      , rc::gen::container<std::vector<char>>(rc::gen::element<char>(char(c1), char(c2))))
+      , rc::gen::container<std::vector<char>>(rc::gen::element<char>(std::move(moved_c1), std::move(moved_c2))))
     .as("longest part with 2 different chars");
   RC_PRE(answer_str.find(c1) != std::string::npos);
   RC_PRE(answer_str.find(c2) != std::string::npos);
