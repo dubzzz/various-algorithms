@@ -3,7 +3,7 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
-project(myProject C CXX)
+project(various-algorithms C CXX)
 find_package(GTest REQUIRED)
 #set(CMAKE_VERBOSE_MAKEFILE ON)
 

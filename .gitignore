@@ -45,6 +45,7 @@ Testing
 *.vcxproj.filters
 *.dir/
 *.VC.db
+*.VC.opendb
 *.sln
 .vs/
 Debug/
