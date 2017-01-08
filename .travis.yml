@@ -41,6 +41,10 @@ matrix:
       compiler: gcc
       env: COMPILER_VERSION=6
       addons: *gcc6
+    - os: osx
+      osx_image: xcode8
+      compiler: clang
+      env: COMPILER=clang++
 
 install: 
   - mkdir ~/gtest && cd ~/gtest
