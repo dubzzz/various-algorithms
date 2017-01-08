@@ -45,6 +45,9 @@ matrix:
       osx_image: xcode8
       compiler: clang
       env: COMPILER=clang++
+      before_install:
+        - brew update
+        - brew install libgtest-dev
 
 install: 
   - mkdir ~/gtest && cd ~/gtest
