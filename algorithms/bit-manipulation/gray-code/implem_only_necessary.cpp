@@ -10,6 +10,9 @@ unsigned corresponding_pow(unsigned num)
   return num;
 }
 
+std::reverse_iterator<const unsigned*> fixed_rbegin(std::vector<unsigned> const& vs) { return std::reverse_iterator<const unsigned*>{ vs.data() + vs.size() }; }
+std::reverse_iterator<const unsigned*> fixed_rend(std::vector<unsigned> const& vs) { return std::reverse_iterator<const unsigned*>{ vs.data() }; }
+
 std::vector<unsigned> build_grays(unsigned num)
 {
   if (num == 0)
@@ -18,19 +21,19 @@ std::vector<unsigned> build_grays(unsigned num)
   }
   std::vector<unsigned> codes(1);
   codes.reserve(num);
-  // Need to preallocate necessary memory in order to prevent from:
-  // If the new size() is greater than capacity() then all iterators and references (including the past-the-end iterator) are invalidated. Otherwise only the past-the-end iterator is invalidated.
+  // Please refer to implem.cpp for more precise details concerning the use of helpers: fixed_rbegin and fixed_rend
+  // In a nutshell: past-the-end iterators might be invalidated by push_back (the use of reserve prevent others to be invalidated)
   
   unsigned corresponding = corresponding_pow(num);
   unsigned more = 1;
   while (codes.size() < corresponding)
   {
-    std::transform(codes.rbegin(), codes.rend()
+    std::transform(fixed_rbegin(codes), fixed_rend(codes)
         , std::back_inserter(codes)
         , [more](auto prev){ return prev + more; });
     more <<= 1;
   }
-  std::transform(codes.rbegin(), std::next(codes.rbegin(), num - corresponding)
+  std::transform(fixed_rbegin(codes), std::next(fixed_rbegin(codes), num - corresponding)
       , std::back_inserter(codes)
       , [more](auto prev){ return prev + more; });
   return codes;
