@@ -50,8 +50,14 @@ RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
       [](auto&& vs) { return std::string(std::begin(vs), std::end(vs)); }
       , rc::gen::container<std::vector<char>>(pre_length, rc::gen::arbitrary<char>()))
     .as("before longest chars");
-  RC_PRE(pre_str.size() == std::size_t() || (pre_str.back() != c1 && pre_str.back() != c2));
-  RC_PRE(pre_str.size() < std::size_t(2) || pre_str[pre_str.size() -1] != pre_str[pre_str.size() -2]);
+  if (! pre_str.empty())
+  {
+    RC_PRE(pre_str.back() != c1 && pre_str.back() != c2);
+  }
+  if (pre_str.size() >= std::size_t(2))
+  {
+    RC_PRE(pre_str[pre_str.size() -1] != pre_str[pre_str.size() -2]);
+  }
   
   std::size_t post_length = *rc::gen::inRange<std::size_t>(0, answer_str.size())
     .as("length of the part after longest");
@@ -59,8 +65,14 @@ RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
       [](auto&& vs) { return std::string(std::begin(vs), std::end(vs)); }
       , rc::gen::container<std::vector<char>>(post_length, rc::gen::arbitrary<char>()))
     .as("after longest chars");
-  RC_PRE(post_str.size() == std::size_t() || (post_str.front() != c1 && post_str.front() != c2));
-  RC_PRE(post_str.size() < std::size_t(2) || post_str[0] != post_str[1]);
+  if (! post_str.empty())
+  {
+    RC_PRE(post_str.front() != c1 && post_str.front() != c2);
+  }
+  if (post_str.size() >= std::size_t(2))
+  {
+    RC_PRE(post_str[0] != post_str[1]);
+  }
   
   std::string data = pre_str + answer_str + post_str;
   RC_ASSERT(answer_str.size() == longest_size(data));
