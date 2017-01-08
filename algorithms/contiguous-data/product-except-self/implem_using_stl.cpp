@@ -6,6 +6,11 @@
 
 std::vector<int> product_except_impl(std::vector<int> data)
 {
+  if (data.empty())
+  {
+    return {};
+  }
+
   // [i] = product data[0..i[
   std::vector<int> prod_upto = {1};
   std::copy(data.begin(), data.end() -1, std::back_inserter(prod_upto));
