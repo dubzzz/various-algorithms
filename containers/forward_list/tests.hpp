@@ -359,7 +359,8 @@ TEST(TEST_NAME, CopyMoveLeakFree)
     l2 = std::move(l3);
     l3 = std::move(l2);
 
-    l2 = std::move(l2);
+    forward_list<int>& ref_l2 = l2;
+    ref_l2 = std::move(l2);
 
     forward_list<int> l4(std::move(l));
     l = l4;
