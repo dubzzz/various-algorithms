@@ -142,7 +142,7 @@ RC_GTEST_PROP(TEST_NAME, Property_ToRoman_ReturnNotEmpty, ())
   RC_ASSERT(to_roman_str(N).size() > std::size_t());
 }
 
-RC_GTEST_PROP(TEST_NAME, Property_ToRoman_IsSurjective, ())
+RC_GTEST_PROP(TEST_NAME, Property_ToRoman_IsInjective, ())
 {
   auto generator = rc::gen::inRange(-static_cast<int>(max_roman), static_cast<int>(max_roman));
   int a = *generator;
