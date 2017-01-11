@@ -20,3 +20,12 @@ It also wants to make use of:
  - G++ 5.1 or later (tested using 4.9 with flags removing missing features)
  - Clang 3.4 or later
  - Visual Studio 14.0 2015 or later
+
+## How to add your own implementation?
+
+In order to add your own implementation you just have to create it inside the project directory.
+For template-based or constexpr-based implementations (the ones requiring computations at compile time), your implementation will have to be put in a ```.hpp``` which will directly be inluded into the ```main.cpp``` test file as the header.
+
+Implementation's name has to follow the following rules:
+- implem.cpp or implem_*.cpp and include aim.hpp
+- or implem.hpp or implem_*.hpp which would be included as header file
