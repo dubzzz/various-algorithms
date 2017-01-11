@@ -37,8 +37,6 @@ __CONSTEXPR__ unsigned most_significant_position(unsigned num)
   return num ? most_significant_position_helper<4*sizeof(unsigned), 0>(num) : 0;
 }
 
-#include "tests.hpp"
-
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   pragma message("warning - constexpr tests have been disabled for this compiler")
 #   pragma message("warning - requirement: compiler compatible with C++14's constexpr")

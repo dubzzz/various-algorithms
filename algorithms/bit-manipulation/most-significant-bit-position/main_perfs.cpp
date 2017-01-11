@@ -1,5 +1,5 @@
 //#include <iostream>
-unsigned most_significant_position(unsigned);
+#include SPECIFIC_HEADER
 
 int main(int /*argc*/, char** /*argv*/)
 {

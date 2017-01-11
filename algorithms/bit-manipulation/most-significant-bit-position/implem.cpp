@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <utility>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 template <std::size_t I> constexpr unsigned pow_of_2()
@@ -26,7 +28,4 @@ unsigned most_significant_position(unsigned num)
   using defining_sequence = std::make_index_sequence<8 * sizeof(unsigned)>;
   return most_significant_position_helper(num, defining_sequence());
 }
-
-#define NO_CONSTEXPR
-#include "tests.hpp"
 
