@@ -57,6 +57,7 @@ RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
   if (pre_str.size() >= std::size_t(2))
   {
     RC_PRE(pre_str[pre_str.size() -1] != pre_str[pre_str.size() -2]);
+    RC_PRE(pre_str[pre_str.size() -2] != c1 && pre_str[pre_str.size() -2] != c2); //[pre_str.size() -1] already tested
   }
   
   std::size_t post_length = *rc::gen::inRange<std::size_t>(0, answer_str.size())
@@ -72,6 +73,7 @@ RC_GTEST_PROP(TEST_NAME, RandomData, (char c1, char c2))
   if (post_str.size() >= std::size_t(2))
   {
     RC_PRE(post_str[0] != post_str[1]);
+    RC_PRE(post_str[1] != c1 && post_str[1] != c2); //[0] already tested
   }
   
   std::string data = pre_str + answer_str + post_str;
