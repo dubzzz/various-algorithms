@@ -120,5 +120,3 @@ public:
   const_iterator cend() const { return const_iterator(); }
 };
 
-#include "tests.hpp"
-

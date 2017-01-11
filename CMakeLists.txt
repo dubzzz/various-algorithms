@@ -143,6 +143,59 @@ function(generate_all_execs)
   endforeach()
 endfunction()
 
+function(generate_exec_new EXEC_NAME EXEC_SRC_FILE IMPLEM_SRC_FILE)
+
+  # Generate project and test name
+  
+  build_exec_prefix(EXEC_PREFIX EXEC_OUTPUTDIR "${EXEC_SRC_FILE}")
+  build_exec_name(TARGET_NAME CODE_TEST_NAME "${EXEC_NAME}" "${EXEC_PREFIX}" "${IMPLEM_SRC_FILE}")
+  message(STATUS "-- Target name: ${TARGET_NAME} (for test: ${CODE_TEST_NAME})")
+  
+  # Add files into the project
+  
+  get_filename_component(IMPLEM_EXT ${IMPLEM_SRC_FILE} EXT)
+  if (IMPLEM_EXT STREQUAL ".hpp")
+    add_executable(${TARGET_NAME} ${IMPLEM_SRC_FILE} ${EXEC_SRC_FILE})
+    get_filename_component(SPECIFIC_HEADER ${IMPLEM_SRC_FILE} NAME)
+  else()
+    add_executable(${TARGET_NAME} ${IMPLEM_SRC_FILE} ${EXEC_SRC_FILE} aim.hpp)
+    set(SPECIFIC_HEADER "aim.hpp")
+  endif()
+  
+  # Customize project's properties
+  
+  set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXEC_OUTPUTDIR})
+  if (MSVC)
+    target_compile_options(${TARGET_NAME} PRIVATE /DTEST_NAME=${CODE_TEST_NAME} /DSPECIFIC_HEADER="${SPECIFIC_HEADER}")
+  else()
+    target_compile_options(${TARGET_NAME} PRIVATE -DTEST_NAME=${CODE_TEST_NAME} -DSPECIFIC_HEADER="${SPECIFIC_HEADER}")
+  endif()
+  if (EXEC_OUTPUTDIR STREQUAL "test")
+    target_link_libraries(${TARGET_NAME} ${GTEST_BOTH_LIBRARIES} rapidcheck)
+    add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
+  endif()
+
+endfunction()
+
+function(generate_all_execs_new)
+  file(GLOB IMPLEM_SRC_FILES implem*.cpp)
+  file(GLOB IMPLEM_HDR_FILES implem*.hpp)
+  file(GLOB EXEC_SRC_FILES main.cpp main_*.cpp)
+  
+  message(STATUS "Scanning: ${CMAKE_CURRENT_SOURCE_DIR}")
+  get_filename_component(EXEC_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+  #message(STATUS "Owner name: ${EXEC_NAME}")
+
+  foreach(EXEC_SRC_FILE ${EXEC_SRC_FILES})
+    foreach(IMPLEM_SRC_FILE ${IMPLEM_SRC_FILES})
+      generate_exec_new("${EXEC_NAME}" "${EXEC_SRC_FILE}" "${IMPLEM_SRC_FILE}")
+    endforeach()
+    foreach(IMPLEM_SRC_FILE ${IMPLEM_HDR_FILES})
+      generate_exec_new("${EXEC_NAME}" "${EXEC_SRC_FILE}" "${IMPLEM_SRC_FILE}")
+    endforeach()
+  endforeach()
+endfunction()
+
 # Declaration of sub-CMakeLists.txt
 
 file(GLOB_RECURSE CMAKEFILES **/CMakeLists.txt)
