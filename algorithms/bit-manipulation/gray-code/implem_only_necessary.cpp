@@ -2,6 +2,8 @@
 #include <iterator>
 #include <vector>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 unsigned corresponding_pow(unsigned num)
@@ -38,6 +40,4 @@ std::vector<unsigned> build_grays(unsigned num)
       , [more](auto prev){ return prev + more; });
   return codes;
 }
-
-#include "tests.hpp"
 

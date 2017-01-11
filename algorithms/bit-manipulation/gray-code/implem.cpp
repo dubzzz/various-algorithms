@@ -7,6 +7,8 @@
   #include <iostream>
 #endif
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 unsigned corresponding_pow(unsigned num)
@@ -64,6 +66,4 @@ std::vector<unsigned> build_grays(unsigned num)
   codes.erase(std::next(codes.begin(), num), codes.end());
   return codes;
 }
-
-#include "tests.hpp"
 
