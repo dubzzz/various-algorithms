@@ -23,5 +23,3 @@ template <class It> auto find_unique(It&& beg, It&& end)
       }).first;
 }
 
-#include "tests.hpp"
-
