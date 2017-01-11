@@ -1,3 +1,5 @@
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 unsigned most_significant(unsigned num)
@@ -10,6 +12,4 @@ unsigned less_significant(unsigned num)
 {
   return num == 0 ? 0 : most_significant(num ^ (num -1));
 }
-
-#include "tests.hpp"
 
