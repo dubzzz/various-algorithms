@@ -1,5 +1,7 @@
-//#include <bitset>
-//#include <iostream>
+#ifdef DEBUG
+  #include <bitset>
+  #include <iostream>
+#endif
 #include <iterator>
 #include <numeric>
 
@@ -14,11 +16,13 @@ template <class It> auto find_unique(It&& beg, It&& end)
       , std::forward<It>(end), std::make_pair(value_type(), value_type())
       , [](auto&& acc, auto&& cur)
       {
-        /*std::cout << "Bits equal to 1: " << std::cout.widen('\n');
-        std::cout << "    0 mod 3 times: " << std::bitset<num_bytes>(~(acc.first | acc.second)) << std::cout.widen('\n');
-        std::cout << "    1 mod 3 times: " << std::bitset<num_bytes>(acc.first) << std::cout.widen('\n');
-        std::cout << "    2 mod 3 times: " << std::bitset<num_bytes>(acc.second) << std::cout.widen('\n');
-        std::cout << "Input:             " << std::bitset<num_bytes>(cur) << std::cout.widen('\n') << std::endl;*/
+        #ifdef DEBUG
+          std::cout << "Bits equal to 1: " << std::cout.widen('\n');
+          std::cout << "    0 mod 3 times: " << std::bitset<num_bytes>(~(acc.first | acc.second)) << std::cout.widen('\n');
+          std::cout << "    1 mod 3 times: " << std::bitset<num_bytes>(acc.first) << std::cout.widen('\n');
+          std::cout << "    2 mod 3 times: " << std::bitset<num_bytes>(acc.second) << std::cout.widen('\n');
+          std::cout << "Input:             " << std::bitset<num_bytes>(cur) << std::cout.widen('\n') << std::endl;
+        #endif
         return std::make_pair(~acc.second & (acc.first ^ cur), (acc.second & ~cur) | (acc.first & cur));
       }).first;
 }
