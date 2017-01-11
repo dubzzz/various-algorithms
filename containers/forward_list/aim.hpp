@@ -1,9 +1,6 @@
 /*
   The aim of this topic is to write your own implementation of
   std::forward_list<T>
-
-  Your implementation has to be put in a file called implem.hpp or implem_*.hpp
-  where * can be anything you want
 */
 
 // Algorithm to be tested
