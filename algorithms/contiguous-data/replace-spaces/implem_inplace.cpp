@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <string>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 // In-place
@@ -38,6 +40,3 @@ std::string replace_spaces(std::string const& in)
   replace_spaces_inplace(copy);
   return copy;
 }
-
-#include "tests.hpp"
-

@@ -3,6 +3,8 @@
 #include <sstream>
 #include <string>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 // STL
@@ -24,6 +26,3 @@ std::string replace_spaces(std::string const& in)
   std::string out = oss.str();
   return out.empty() || in[in.size()-1] == ' ' ? out : out.substr(0, out.size() -replace_by.size());
 }
-
-#include "tests.hpp"
-
