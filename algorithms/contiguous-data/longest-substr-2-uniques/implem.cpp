@@ -2,6 +2,8 @@
 #include <iostream>
 #include <string>
 
+#include "aim.hpp"
+
 std::size_t longest_size(std::string const& in)
 {
   std::size_t max_length = 0;
@@ -38,6 +40,3 @@ std::size_t longest_size(std::string const& in)
   }
   return max_length;
 }
-
-#include "tests.hpp"
-
