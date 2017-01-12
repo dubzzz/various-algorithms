@@ -2,6 +2,8 @@
 #include <string>
 #include <unordered_set>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 // With ADDITIONAL DATA STRUCTURE
 
@@ -18,6 +20,3 @@ bool all_unique(std::string const& in)
   }
   return true;
 }
-
-#include "tests.hpp"
-

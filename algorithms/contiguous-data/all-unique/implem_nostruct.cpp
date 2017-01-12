@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <string>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 // Without ADDITIONAL DATA STRUCTURE
 
@@ -26,6 +28,3 @@ bool all_unique(std::string const& in)
   }
   return true;
 }
-
-#include "tests.hpp"
-
