@@ -28,6 +28,3 @@ auto string_to_long(std::string const& expression, unsigned base=10) { return st
 
 constexpr auto string_to_longlong(const char* expression, unsigned base=10) { return _atox<long long>(expression, base); }
 auto string_to_longlong(std::string const& expression, unsigned base=10) { return string_to_longlong(expression.c_str(), base); }
-
-#include "tests.hpp"
-

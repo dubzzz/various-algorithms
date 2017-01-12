@@ -62,10 +62,7 @@ auto string_to_long(std::string const& expression, unsigned base=10) { return st
 __CONSTEXPR__ auto string_to_longlong(const char* expression, unsigned base=10) { return _atox<long long>(expression, base); }
 auto string_to_longlong(std::string const& expression, unsigned base=10) { return string_to_longlong(expression.c_str(), base); }
 
-#include "tests.hpp"
-
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   pragma message("warning - constexpr tests have been disabled for this compiler")
 #   pragma message("warning - requirement: compiler compatible with C++14's constexpr")
 #endif
-
