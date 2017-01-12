@@ -1,6 +1,8 @@
 #include <string>
 #include <unordered_map>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 bool isomorphics(std::string const& s1, std::string const& s2)
@@ -27,6 +29,3 @@ bool isomorphics(std::string const& s1, std::string const& s2)
   }
   return true;
 }
-
-#include "tests.hpp"
-
