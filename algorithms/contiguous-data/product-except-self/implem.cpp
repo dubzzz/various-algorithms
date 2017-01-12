@@ -1,5 +1,7 @@
 #include <vector>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 std::vector<int> product_except(std::vector<int> const& data)
@@ -24,6 +26,3 @@ std::vector<int> product_except(std::vector<int> const& data)
 
   return out;
 }
-
-#include "tests.hpp"
-

@@ -1,1 +1,1 @@
-generate_all_execs()
+generate_all_execs_new()

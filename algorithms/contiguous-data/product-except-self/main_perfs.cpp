@@ -1,6 +1,7 @@
 #include <numeric>
 #include <vector>
-std::vector<int> product_except(std::vector<int> const&);
+
+#include SPECIFIC_HEADER
 
 int main(int /*argc*/, char** /*argv*/)
 {
@@ -12,4 +13,3 @@ int main(int /*argc*/, char** /*argv*/)
   bool success = out[1] == 0;
   return !success;
 }
-
