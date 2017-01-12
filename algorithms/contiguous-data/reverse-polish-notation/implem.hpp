@@ -39,6 +39,3 @@ template <class It> int eval(It beg, It end)
   }
   return data.top();
 }
-
-#include "tests.hpp"
-
