@@ -2,6 +2,8 @@
 #include <memory>
 #include <string>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 // In-place
@@ -26,6 +28,3 @@ char* reverse(char* in)
   }
   return in;
 }
-
-#include "tests.hpp"
-
