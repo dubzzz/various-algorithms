@@ -4,6 +4,8 @@
 #include <string>
 #include <utility>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 typedef std::pair<int, char> RawLetter;
@@ -87,6 +89,4 @@ int from_roman_str(std::string const& expr)
   }
   return positive_sign ? num : -num;
 }
-
-#include "tests.hpp"
 

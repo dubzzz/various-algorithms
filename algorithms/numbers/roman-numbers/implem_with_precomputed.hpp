@@ -1,3 +1,4 @@
+#pragma once
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   define __CONSTEXPR__
 #   define NO_CONSTEXPR
@@ -157,8 +158,6 @@ int from_roman_str(std::string const& expr)
 {
   return from_roman_str(expr.c_str());
 }
-
-#include "tests.hpp"
 
 #if defined(NO_SUPPORT_CONSTEXPR_CXX14)
 #   pragma message("warning - constexpr tests have been disabled for this compiler")

@@ -1,10 +1,11 @@
 #include <string>
 
-std::string to_roman_str(int);
-int from_roman_str(std::string const&);
+#include SPECIFIC_HEADER
 
+namespace perfs {
 constexpr int min_roman = -39;
 constexpr int max_roman =  39;
+}
 
 int main(int /*argc*/, char** /*argv*/)
 {
@@ -12,7 +13,7 @@ int main(int /*argc*/, char** /*argv*/)
   constexpr unsigned num_runs = 1e6;
   for (unsigned run_id {} ; run_id != num_runs ; ++run_id)
   {
-    int num = min_roman + (run_id % (max_roman - min_roman +1));
+    int num = perfs::min_roman + (run_id % (perfs::max_roman - perfs::min_roman +1));
     out += from_roman_str(to_roman_str(num)) - num;
   }
   bool success = out == unsigned();
