@@ -85,5 +85,3 @@ void sort_stack(std::stack<int>& st)
   merge_sort_helper<false>(st, helper1, helper2, st.size());
 }
 
-#include "tests.hpp"
-

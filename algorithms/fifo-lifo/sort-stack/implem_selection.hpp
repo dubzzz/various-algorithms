@@ -37,5 +37,3 @@ void sort_stack(std::stack<T>& st)
   }
 }
 
-#include "tests.hpp"
-
