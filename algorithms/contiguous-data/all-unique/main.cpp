@@ -1,6 +1,7 @@
 #include "gtest/gtest.h"
 #include <rapidcheck/gtest.h>
 
+#include <algorithm>
 #include <string>
 
 #include SPECIFIC_HEADER
