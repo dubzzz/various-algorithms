@@ -3,6 +3,8 @@
 #include <numeric>
 #include <vector>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 std::vector<unsigned long long> build_factorials(unsigned num)
@@ -20,6 +22,4 @@ std::vector<unsigned long long> build_factorials(unsigned num)
       , std::multiplies<unsigned long long>());
   return vs;
 }
-
-#include "tests.hpp"
 

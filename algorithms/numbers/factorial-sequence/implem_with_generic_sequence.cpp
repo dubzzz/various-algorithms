@@ -3,6 +3,8 @@
 #include <numeric>
 #include <vector>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 template <class Fun> auto build_sequence(Fun&& fun, std::size_t num, std::size_t init, unsigned long long uInit)
@@ -21,6 +23,4 @@ std::vector<unsigned long long> build_factorials(unsigned num)
       ? std::vector<unsigned long long>{}
       : build_sequence([](auto&& n, auto&& prev) { return n * prev; }, num, 0, 1);
 }
-
-#include "tests.hpp"
 
