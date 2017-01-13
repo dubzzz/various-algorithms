@@ -1,7 +1,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "hanoi.hpp"
+#include "ihanoi.hpp"
+#include "aim.hpp"
 
 // Algorithm to be tested
   
@@ -19,8 +20,7 @@ struct ApplyMapping
   }
 };
 
-template <class T>
-void hanoi(HanoiTower<T>& tower)
+void hanoi(IHanoi& tower)
 {
 
   if (tower.height_of(0) == 0)
@@ -51,6 +51,4 @@ void hanoi(HanoiTower<T>& tower)
     tower.move(move.second, move.first);
   }
 }
-
-#include "tests.hpp"
 

@@ -1,5 +1,8 @@
+#pragma once
 #include <stdexcept>
 #include <stack>
+
+#include "ihanoi.hpp"
 
 // HanoiTower objects
 
@@ -10,7 +13,7 @@ struct too_many_iterations : std::length_error
 };
 
 template <class AssertSystem>
-class HanoiTower
+class HanoiTower : public IHanoi
 {
   std::stack<unsigned int> towers[3];
   unsigned long long remaining_moves_allowed;
@@ -32,19 +35,19 @@ public:
     }
   }
 
-  std::size_t height_of(const std::size_t tower_id) const
+  std::size_t height_of(const std::size_t tower_id) const override
   {
     if (! AssertSystem::expect(tower_id < 3, "Tower id must be in the range 0-2")) return std::size_t();
     return towers[tower_id].size();
   }
 
-  unsigned int head_of(const std::size_t tower_id) const
+  unsigned int head_of(const std::size_t tower_id) const override
   {
     if (! AssertSystem::expect(tower_id < 2, "Tower id must be in the range 0-2")) return 0;
     return towers[tower_id].top();
   }
 
-  void move(const std::size_t dest, const std::size_t from)
+  void move(const std::size_t dest, const std::size_t from) override
   {
     if (! AssertSystem::expect(dest < 3, "Destination id must be in the range 0-2")) return;
     if (! AssertSystem::expect(from < 3, "Source id must be in the range 0-2")) return;

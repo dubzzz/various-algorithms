@@ -1,12 +1,12 @@
 #include <stack>
 #include <tuple>
 
-#include "hanoi.hpp"
+#include "ihanoi.hpp"
+#include "aim.hpp"
 
 // Algorithm to be tested
   
-template <class T>
-void hanoi(HanoiTower<T>& tower)
+void hanoi(IHanoi& tower)
 {
   if (tower.height_of(0) == 0)
   {
@@ -37,6 +37,4 @@ void hanoi(HanoiTower<T>& tower)
     }
   }
 }
-
-#include "tests.hpp"
 
