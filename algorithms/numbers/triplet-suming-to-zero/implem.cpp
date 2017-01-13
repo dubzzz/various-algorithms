@@ -2,6 +2,8 @@
 #include <tuple>
 #include <vector>
 
+#include "aim.hpp"
+
 // Algorithm to be tested
 
 auto sum3_impl(std::vector<int> data)
@@ -42,6 +44,4 @@ std::vector<std::tuple<int,int,int>> sum3(std::vector<int> const& in)
 {
   return sum3_impl(in);
 }
-
-#include "tests.hpp"
 
