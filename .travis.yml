@@ -70,4 +70,4 @@ script:
   - export CXX_STD="c++14"
   - cmake .
   - make -j4
-  - if [ "$VALGRIND" == "ON" ]; then valgrind --leak-check=full ctest -VV; else ctest -VV; fi
+  - if [ "$VALGRIND" == "ON" ]; then valgrind --leak-check=full --track-origins=yes ctest -VV; else ctest -VV; fi
