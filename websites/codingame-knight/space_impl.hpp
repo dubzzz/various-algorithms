@@ -1,26 +1,14 @@
+#pragma once
 #include <algorithm>
 #include <array>
 #include <cmath>
 #include <iterator>
 
 #ifdef DEBUG
-  #include <ostream>
   #include <iostream>
 #endif
 
-enum class Where { Less, Equal, More };
-
-#ifdef DEBUG
-  std::ostream& operator<<(std::ostream& os, Where w)
-  {
-    switch (w)
-    {
-      case Where::Less: return (os << "less");
-      case Where::More: return (os << "more");
-      default: return (os << "equal");
-    }
-  }
-#endif
+#include "ispace.hpp"
 
 struct too_many_iterations : std::length_error
 {
@@ -29,7 +17,7 @@ struct too_many_iterations : std::length_error
 };
 
 template <std::size_t DIM, class AssertSystem>
-class Space
+class Space : public ISpace<DIM>
 {
   const std::array<std::size_t, DIM> dimensions_;
   const std::array<std::size_t, DIM> hidden_;
@@ -51,7 +39,7 @@ public:
       std::cout << ">" << std::endl;
     #endif
   }
-  std::array<std::size_t, DIM> const& dimensions() const
+  std::array<std::size_t, DIM> const& dimensions() const override
   {
     #ifdef DEBUG
       std::cout << "--> Space::dimensions - \n<-- dimensions<";
@@ -60,7 +48,7 @@ public:
     #endif
     return dimensions_;
   }
-  std::array<Where, DIM> guess(std::array<std::size_t, DIM> const& choice)
+  std::array<Where, DIM> guess(std::array<std::size_t, DIM> const& choice) override
   {
     #ifdef DEBUG
       std::cout << "--> Space::guess - choice<";
@@ -82,7 +70,7 @@ public:
     #endif
     return answer;
   }
-  bool is_solution(std::array<std::size_t, DIM> const& choice) const
+  bool is_solution(std::array<std::size_t, DIM> const& choice) const override
   {
     #ifdef DEBUG
       std::cout << "--> Space::is_solution - choice<";

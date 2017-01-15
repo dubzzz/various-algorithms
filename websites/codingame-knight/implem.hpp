@@ -1,11 +1,11 @@
 #include <algorithm>
 #include <array>
 
-#include "space.hpp"
+#include "ispace.hpp"
 
 // Algorithm to be tested
 
-template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space(Space<DIM, T>& space)
+template <std::size_t DIM> std::array<std::size_t, DIM> locate_in_space(ISpace<DIM>& space)
 {
   std::array<std::size_t, DIM> min_ext;
   std::fill(std::begin(min_ext), std::end(min_ext), std::size_t());
@@ -59,6 +59,4 @@ template <std::size_t DIM, class T> std::array<std::size_t, DIM> locate_in_space
 
   return min_ext;
 }
-
-#include "tests.hpp"
 
