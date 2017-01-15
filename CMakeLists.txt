@@ -111,38 +111,6 @@ function(build_exec_name OUTPUT_TARGETNAME OUTPUT_TESTNAME EXEC_NAME PREFIX SRC_
   set(${OUTPUT_TESTNAME} ${CODE_TEST_NAME} PARENT_SCOPE)
 endfunction()
 
-function(generate_exec EXEC_NAME EXEC_SRC_FILE IMPLEM_SRC_FILE)
-  build_exec_prefix(EXEC_PREFIX EXEC_OUTPUTDIR "${EXEC_SRC_FILE}")
-  build_exec_name(TARGET_NAME CODE_TEST_NAME "${EXEC_NAME}" "${EXEC_PREFIX}" "${IMPLEM_SRC_FILE}")
-  message(STATUS "-- Target name: ${TARGET_NAME} (for test: ${CODE_TEST_NAME})")
-  add_executable(${TARGET_NAME} ${IMPLEM_SRC_FILE} ${EXEC_SRC_FILE})
-  if (MSVC)
-    target_compile_options(${TARGET_NAME} PRIVATE /DTEST_NAME=${CODE_TEST_NAME})
-  else()
-    target_compile_options(${TARGET_NAME} PRIVATE -DTEST_NAME=${CODE_TEST_NAME})
-  endif()
-  target_link_libraries(${TARGET_NAME} ${GTEST_BOTH_LIBRARIES} rapidcheck)
-  set_target_properties(${TARGET_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${EXEC_OUTPUTDIR})
-  if (${EXEC_OUTPUTDIR} MATCHES "test")
-    add_test(NAME ${TARGET_NAME} COMMAND ${TARGET_NAME})
-  endif()
-endfunction()
-
-function(generate_all_execs)
-  file(GLOB TEST_SRC_FILES implem*.cpp)
-  file(GLOB MEASURE_SRC_FILES main.cpp main_*.cpp)
-  
-  message(STATUS "Scanning: ${CMAKE_CURRENT_SOURCE_DIR}")
-  get_filename_component(EXEC_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
-  #message(STATUS "Owner name: ${EXEC_NAME}")
-
-  foreach(MEASURE_NAME ${MEASURE_SRC_FILES})
-    foreach(SRC_NAME ${TEST_SRC_FILES})
-      generate_exec("${EXEC_NAME}" "${MEASURE_NAME}" "${SRC_NAME}")
-    endforeach()
-  endforeach()
-endfunction()
-
 function(generate_exec_new EXEC_NAME EXEC_SRC_FILE IMPLEM_SRC_FILE)
 
   # Generate project and test name
