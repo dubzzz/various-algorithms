@@ -10,7 +10,7 @@ constexpr int max_roman =  39;
 int main(int /*argc*/, char** /*argv*/)
 {
   unsigned out {};
-  constexpr unsigned num_runs = 1e6;
+  constexpr unsigned num_runs = 1000000;
   for (unsigned run_id {} ; run_id != num_runs ; ++run_id)
   {
     int num = perfs::min_roman + (run_id % (perfs::max_roman - perfs::min_roman +1));
