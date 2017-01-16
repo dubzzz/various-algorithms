@@ -100,7 +100,7 @@ RC_GTEST_PROP(TEST_NAME, FindAnswerWhenItExist, (std::vector<int> in, int a, int
   in.insert(std::next(std::begin(in), pc), c);
   
   auto&& out = sum3(in);
-  RC_ASSERT(out.size());
+  RC_ASSERT(!!out.size());
   RC_ASSERT(std::find(std::begin(out), std::end(out), possible_answer) != std::end(out));
 }
 
