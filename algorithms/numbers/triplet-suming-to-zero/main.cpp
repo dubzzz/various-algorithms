@@ -40,7 +40,7 @@ TEST(TEST_NAME, MultipleTriplets)
 
 RC_GTEST_PROP(TEST_NAME, SumToZero, (std::vector<int> const& in))
 {
-  RC_PRE(in.size() >= 3);
+  RC_PRE(in.size() >= unsigned(3));
   auto&& out = sum3(in);
   RC_ASSERT(std::find_if_not(std::begin(out), std::end(out)
       , [](auto t) { return std::get<0>(t) + std::get<1>(t) + std::get<2>(t) == 0;
