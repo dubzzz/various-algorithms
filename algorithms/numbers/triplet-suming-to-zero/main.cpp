@@ -49,7 +49,7 @@ RC_GTEST_PROP(TEST_NAME, SumToZero, (std::vector<int> const& in))
 
 RC_GTEST_PROP(TEST_NAME, Ordered, (std::vector<int> const& in))
 {
-  RC_PRE(in.size() >= 3);
+  RC_PRE(in.size() >= unsigned(3));
   auto&& out = sum3(in);
   RC_ASSERT(std::find_if_not(std::begin(out), std::end(out)
       , [](auto t) { return std::get<0>(t) <= std::get<1>(t) && std::get<1>(t) <= std::get<2>(t);
@@ -58,7 +58,7 @@ RC_GTEST_PROP(TEST_NAME, Ordered, (std::vector<int> const& in))
 
 RC_GTEST_PROP(TEST_NAME, Unicity, (std::vector<int> const& in))
 {
-  RC_PRE(in.size() >= 3);
+  RC_PRE(in.size() >= unsigned(3));
   auto&& out = sum3(in);
   std::sort(std::begin(out), std::end(out));
   RC_ASSERT(std::unique(std::begin(out), std::end(out)) == std::end(out));
@@ -66,7 +66,7 @@ RC_GTEST_PROP(TEST_NAME, Unicity, (std::vector<int> const& in))
 
 RC_GTEST_PROP(TEST_NAME, ComeFromInput, (std::vector<int> const& in))
 {
-  RC_PRE(in.size() >= 3);
+  RC_PRE(in.size() >= unsigned(3));
   auto&& out = sum3(in);
   auto sin = in;
   std::sort(std::begin(sin), std::end(sin));
@@ -110,4 +110,3 @@ int main(int argc, char **argv)
   int ret { RUN_ALL_TESTS() };
   return ret;
 }
-
