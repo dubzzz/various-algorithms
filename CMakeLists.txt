@@ -145,6 +145,31 @@ function(generate_exec_new EXEC_NAME EXEC_SRC_FILE IMPLEM_SRC_FILE)
 
 endfunction()
 
+function(generate_compile_only EXEC_NAME EXEC_SRC_FILE)
+
+  # Generate project and test name
+  
+  build_exec_prefix(EXEC_PREFIX EXEC_OUTPUTDIR "${EXEC_SRC_FILE}")
+  build_exec_name(TARGET_NAME CODE_TEST_NAME "${EXEC_NAME}" "${EXEC_PREFIX}" "implem.cpp")
+  set(TARGET_NAME "${TARGET_NAME}.compileonly")
+  set(CODE_TEST_NAME "${CODE_TEST_NAME}_compileonly")
+  message(STATUS "-- Compile-only name: ${TARGET_NAME} (for test: ${CODE_TEST_NAME})")
+  
+  # Add files into the project
+  
+  add_library(${TARGET_NAME} OBJECT ${EXEC_SRC_FILE} aim.hpp)
+  set(SPECIFIC_HEADER "aim.hpp")
+  
+  # Customize project's properties
+  
+  if (MSVC)
+    target_compile_options(${TARGET_NAME} PRIVATE /DTEST_NAME=${CODE_TEST_NAME} /DSPECIFIC_HEADER="${SPECIFIC_HEADER}")
+  else()
+    target_compile_options(${TARGET_NAME} PRIVATE -DTEST_NAME=${CODE_TEST_NAME} -DSPECIFIC_HEADER="${SPECIFIC_HEADER}")
+  endif()
+
+endfunction()
+
 function(generate_all_execs_new)
   file(GLOB IMPLEM_SRC_FILES implem*.cpp)
   file(GLOB IMPLEM_HDR_FILES implem*.hpp)
@@ -155,6 +180,7 @@ function(generate_all_execs_new)
   #message(STATUS "Owner name: ${EXEC_NAME}")
 
   foreach(EXEC_SRC_FILE ${EXEC_SRC_FILES})
+    generate_compile_only("${EXEC_NAME}" "${EXEC_SRC_FILE}")
     foreach(IMPLEM_SRC_FILE ${IMPLEM_SRC_FILES})
       generate_exec_new("${EXEC_NAME}" "${EXEC_SRC_FILE}" "${IMPLEM_SRC_FILE}")
     endforeach()

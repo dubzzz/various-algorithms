@@ -6,5 +6,5 @@
 
 // Algorithm to be tested
 
-template <class It> auto find_unique(It&& beg, It&& end);
+template <class It> typename It::value_type find_unique(It&& beg, It&& end);
 
