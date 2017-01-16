@@ -29,7 +29,7 @@ public:
       : dimensions_(dimensions)
       , hidden_(hidden)
       , num_guess()
-      , max_guesses(std::ceil(std::log(*std::max_element(dimensions_.begin(), dimensions_.end()))/std::log(2)))
+      , max_guesses(std::lround(std::ceil(std::log(*std::max_element(dimensions_.begin(), dimensions_.end()))/std::log(2))))
   {
     #ifdef DEBUG
       std::cout << "--> Space::Space - dimensions<";
