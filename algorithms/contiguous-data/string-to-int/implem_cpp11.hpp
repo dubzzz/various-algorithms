@@ -17,7 +17,7 @@ template <class OutType> constexpr OutType _atox(const char* expression, unsigne
       ? prev
       : (*expression == '-'
         ? -_atox(expression +1, base, prev)
-        : _atox(expression +1, base, prev * base + to_base<OutType>(*expression, base)));
+        : _atox(expression +1, base, static_cast<OutType>(prev * base + to_base<OutType>(*expression, base))));
 }
 
 constexpr auto string_to_int(const char* expression, unsigned base=10) { return _atox<int>(expression, base); }
