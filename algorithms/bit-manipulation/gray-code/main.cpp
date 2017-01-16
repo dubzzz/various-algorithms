@@ -35,7 +35,7 @@ RC_GTEST_PROP(TEST_NAME, AllEntriesAreUnique, (unsigned short N))
 
 RC_GTEST_PROP(TEST_NAME, OneBitDifferBetweenTwoSuccessives, (unsigned short N))
 {
-  RC_PRE(N != (unsigned short()));
+  RC_PRE(!!N);
   auto&& out = build_grays(N);
   std::vector<std::pair<unsigned, unsigned>> successives;
   std::transform(std::begin(out), std::prev(std::end(out))
