@@ -35,7 +35,7 @@ RC_GTEST_PROP(TEST_NAME, AnswerIsBitOfInput, (unsigned N))
 RC_GTEST_PROP(TEST_NAME, AnswerIsTheLowestBit, (unsigned N))
 {
   RC_PRE(N > unsigned());
-  RC_PRE(N & (N-1)); //not a power of two
+  RC_PRE((N & (N-1)) != unsigned()); //not a power of two
   auto answer = less_significant(N);
   RC_ASSERT((N ^ answer) > answer);
 }
