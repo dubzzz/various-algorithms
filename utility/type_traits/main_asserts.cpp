@@ -5,10 +5,10 @@ template <class Type> struct always_true : true_type {};
 template <class Type> struct always_false : false_type {};
 
 template <class Type> constexpr Type test_enable_if(Type&& t, typename enable_if<always_true<Type>::value>::type* /*pt*/ = nullptr) { return std::forward<Type>(t); }
-template <class Type> constexpr Type test_enable_if(Type&& t, typename enable_if<always_false<Type>::value>::type* /*pt*/ = nullptr) { return Type(); }
+template <class Type> constexpr Type test_enable_if(Type&& /*t*/, typename enable_if<always_false<Type>::value>::type* /*pt*/ = nullptr) { return Type(); }
 
 template <class Type> constexpr Type test_enable_if_t(Type&& t, enable_if_t<always_true<Type>::value>* /*pt*/ = nullptr) { return std::forward<Type>(t); }
-template <class Type> constexpr Type test_enable_if_t(Type&& t, enable_if_t<always_false<Type>::value>* /*pt*/ = nullptr) { return Type(); }
+template <class Type> constexpr Type test_enable_if_t(Type&& /*t*/, enable_if_t<always_false<Type>::value>* /*pt*/ = nullptr) { return Type(); }
 
 struct A { int a; int getA() { return a; } };
 struct B : A {};
