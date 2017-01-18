@@ -29,59 +29,59 @@ int main()
   static_assert(test_enable_if_t(true), "Only the method with enable_if_t<true> should be enabled");
   
   // is_void
-  static_assert(is_void_v<void>, "");
-  static_assert(is_void_v<const void>, "");
-  static_assert(is_void_v<volatile void>, "");
-  static_assert(is_void_v<const volatile void>, "");
-  static_assert(! is_void_v<bool>, "");
-  static_assert(! is_void_v<int>, "");
-  static_assert(! is_void_v<A>, "");
+  static_assert(is_void<void>::value, "");
+  static_assert(is_void<const void>::value, "");
+  static_assert(is_void<volatile void>::value, "");
+  static_assert(is_void<const volatile void>::value, "");
+  static_assert(! is_void<bool>::value, "");
+  static_assert(! is_void<int>::value, "");
+  static_assert(! is_void<A>::value, "");
   
   // is_null_pointer
-  static_assert(is_null_pointer_v<decltype(nullptr)>, "");
-  static_assert(is_null_pointer_v<std::nullptr_t>, "");
-  static_assert(is_null_pointer_v<const std::nullptr_t>, "");
-  static_assert(is_null_pointer_v<volatile std::nullptr_t>, "");
-  static_assert(is_null_pointer_v<const volatile std::nullptr_t>, "");
-  static_assert(! is_null_pointer_v<void*>, "");
-  static_assert(! is_null_pointer_v<int*>, "");
-  static_assert(! is_null_pointer_v<A*>, "");
+  static_assert(is_null_pointer<decltype(nullptr)>::value, "");
+  static_assert(is_null_pointer<std::nullptr_t>::value, "");
+  static_assert(is_null_pointer<const std::nullptr_t>::value, "");
+  static_assert(is_null_pointer<volatile std::nullptr_t>::value, "");
+  static_assert(is_null_pointer<const volatile std::nullptr_t>::value, "");
+  static_assert(! is_null_pointer<void*>::value, "");
+  static_assert(! is_null_pointer<int*>::value, "");
+  static_assert(! is_null_pointer<A*>::value, "");
   
   // is_pointer
-  static_assert(is_pointer_v<void*>, "");
-  static_assert(is_pointer_v<void const * const>, "");
-  static_assert(is_pointer_v<void const volatile * const volatile>, "");
-  static_assert(is_pointer_v<int*>, "");
-  static_assert(is_pointer_v<A*>, "");
-  static_assert(is_pointer_v<decltype(&build_A)>, "");
-  static_assert(! is_pointer_v<A&>, "");
-  static_assert(! is_pointer_v<A[]>, "");
-  static_assert(! is_pointer_v<A[10]>, "");
-  static_assert(! is_pointer_v<decltype(nullptr)>, "");
-  static_assert(! is_pointer_v<decltype(&A::a)>, "");
-  static_assert(! is_pointer_v<decltype(&A::getA)>, "");
-  static_assert(! is_pointer_v<std::nullptr_t>, "");
+  static_assert(is_pointer<void*>::value, "");
+  static_assert(is_pointer<void const * const>::value, "");
+  static_assert(is_pointer<void const volatile * const volatile>::value, "");
+  static_assert(is_pointer<int*>::value, "");
+  static_assert(is_pointer<A*>::value, "");
+  static_assert(is_pointer<decltype(&build_A)>::value, "");
+  static_assert(! is_pointer<A&>::value, "");
+  static_assert(! is_pointer<A[]>::value, "");
+  static_assert(! is_pointer<A[10]>::value, "");
+  static_assert(! is_pointer<decltype(nullptr)>::value, "");
+  static_assert(! is_pointer<decltype(&A::a)>::value, "");
+  static_assert(! is_pointer<decltype(&A::getA)>::value, "");
+  static_assert(! is_pointer<std::nullptr_t>::value, "");
   
   // is_array
-  static_assert(is_array_v<int[]>, "");
-  static_assert(is_array_v<int const * const * const []>, "");
-  static_assert(is_array_v<int[5]>, "");
-  static_assert(is_array_v<A[]>, "");
-  static_assert(is_array_v<A[5]>, "");
-  static_assert(! is_array_v<A>, "");
-  static_assert(! is_array_v<int>, "");
-  static_assert(! is_array_v<int*>, "");
-  static_assert(! is_array_v<std::nullptr_t>, "");
+  static_assert(is_array<int[]>::value, "");
+  static_assert(is_array<int const * const * const []>::value, "");
+  static_assert(is_array<int[5]>::value, "");
+  static_assert(is_array<A[]>::value, "");
+  static_assert(is_array<A[5]>::value, "");
+  static_assert(! is_array<A>::value, "");
+  static_assert(! is_array<int>::value, "");
+  static_assert(! is_array<int*>::value, "");
+  static_assert(! is_array<std::nullptr_t>::value, "");
   
   // is_reference
-  static_assert(! is_reference_v<A>, "");
-  static_assert(is_reference_v<A&>, "");
-  static_assert(is_reference_v<A const&>, "");
-  static_assert(is_reference_v<A&&>, "");
-  static_assert(! is_reference_v<int>, "");
-  static_assert(is_reference_v<int&>, "");
-  static_assert(is_reference_v<int const&>, "");
-  static_assert(is_reference_v<int&&>, "");
+  static_assert(! is_reference<A>::value, "");
+  static_assert(is_reference<A&>::value, "");
+  static_assert(is_reference<A const&>::value, "");
+  static_assert(is_reference<A&&>::value, "");
+  static_assert(! is_reference<int>::value, "");
+  static_assert(is_reference<int&>::value, "");
+  static_assert(is_reference<int const&>::value, "");
+  static_assert(is_reference<int&&>::value, "");
   return 0;
 }
 
