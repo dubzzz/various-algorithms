@@ -72,6 +72,15 @@ script:
   - make -j4
   - if [ "$VALGRIND" == "ON" ];
     then
+      svn co svn://svn.valgrind.org/valgrind/trunk valgrind;
+      cd valgrind;
+      ./autogen.sh;
+      mkdir install;
+      ./configure "--prefix=$(pwd)/install";
+      make;
+      make install;
+      ls -R;
+      cd ..;
       valgrind --version;
       valgrind --leak-check=full --show-reachable=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
     else
