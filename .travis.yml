@@ -12,10 +12,6 @@ addons_shortcuts:
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.8']
       packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev']
-  addons_valgrind: &valgrind
-    apt:
-      sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.8']
-      packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev', 'valgrind']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
@@ -50,7 +46,7 @@ matrix:
       env:
         - COMPILER_VERSION=3.8
         - VALGRIND=ON
-      addons: *valgrind
+      addons: *clang38
 
 install: 
   - mkdir ~/gtest && cd ~/gtest
@@ -79,10 +75,9 @@ script:
       ./configure "--prefix=$(pwd)/build-dir" >/dev/null 2>&1;
       make >/dev/null 2>&1;
       make install >/dev/null 2>&1;
-      ls -Rl build-dir;
       cd ..;
-      valgrind --version;
-      valgrind --leak-check=full --show-reachable=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
+      ./valgrind/build-dir/bin/valgrind --version;
+      ./valgrind/build-dir/bin/valgrind --leak-check=full --show-reachable=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
     else
       ctest -VV;
     fi
