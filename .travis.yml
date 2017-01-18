@@ -4,6 +4,10 @@ sudo: false
 # List of apt packages available from Travis CI
 # can be found at: https://github.com/travis-ci/apt-package-whitelist
 addons_shortcuts:
+  addons_clang34: &clang34
+    apt:
+      sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.4']
+      packages: ['clang-3.4', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev']
   addons_clang35: &clang35
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.5']
@@ -37,6 +41,10 @@ matrix:
       env: COMPILER_VERSION=4.9
       addons: *gcc49
     # Other versions
+    - os: linux
+      compiler: clang
+      env: COMPILER_VERSION=3.4
+      addons: *clang34
     - os: linux
       compiler: clang
       env: COMPILER_VERSION=3.8
