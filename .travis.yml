@@ -12,6 +12,10 @@ addons_shortcuts:
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.8']
       packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev']
+  addons_valgrind: &valgrind
+    apt:
+      sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.8']
+      packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev', 'libc6-dbg', 'valgrind']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
@@ -46,7 +50,7 @@ matrix:
       env:
         - COMPILER_VERSION=3.8
         - VALGRIND=ON
-      addons: *clang38
+      addons: *valgrind
 
 install: 
   - mkdir ~/gtest && cd ~/gtest
