@@ -77,7 +77,7 @@ script:
       make install >/dev/null 2>&1;
       cd ..;
       ./valgrind/build-dir/bin/valgrind --version;
-      ./valgrind/build-dir/bin/valgrind --leak-check=full --show-reachable=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
+      ./valgrind/build-dir/bin/valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --expensive-definedness-checks=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
     else
       ctest -VV;
     fi
