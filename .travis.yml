@@ -77,6 +77,8 @@ script:
     then
       export CC="${CC}-${COMPILER_VERSION}";
       export CXX="${CXX}-${COMPILER_VERSION}";
+    else
+      export CXXFLAGS="-stdlib=libc++";
     fi
   - export CXX_STD="c++14"
   - cmake .
