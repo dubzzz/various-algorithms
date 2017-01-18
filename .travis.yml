@@ -73,8 +73,11 @@ install:
 script:
   - export GTEST_COLOR=1
   - export GTEST_ROOT="~/gtest"
-  - export CC="${CC}-${COMPILER_VERSION}"
-  - export CXX="${CXX}-${COMPILER_VERSION}"
+  - if [ "$COMPILER_VERSION" != "3.4" ];
+    then
+      export CC="${CC}-${COMPILER_VERSION}"
+      export CXX="${CXX}-${COMPILER_VERSION}"
+    fi
   - export CXX_STD="c++14"
   - cmake .
   - make -j4
