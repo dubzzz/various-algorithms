@@ -15,7 +15,7 @@ addons_shortcuts:
   addons_valgrind: &valgrind
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports', 'llvm-toolchain-precise-3.8']
-      packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev', 'valgrind']
+      packages: ['clang-3.8', 'g++-4.9', 'cmake', 'cmake-data', 'libgtest-dev', 'libc6-dbg', 'valgrind']
   addons_gcc49: &gcc49
     apt:
       sources: ['ubuntu-toolchain-r-test', 'george-edison55-precise-backports']
@@ -70,4 +70,18 @@ script:
   - export CXX_STD="c++14"
   - cmake .
   - make -j4
-  - if [ "$VALGRIND" == "ON" ]; then valgrind --leak-check=full --show-reachable=yes --track-origins=yes ctest -VV; else ctest -VV; fi
+  - if [ "$VALGRIND" == "ON" ];
+    then
+      svn co svn://svn.valgrind.org/valgrind/trunk valgrind >/dev/null 2>&1;
+      cd valgrind;
+      mkdir build-dir;
+      ./autogen.sh >/dev/null 2>&1;
+      ./configure "--prefix=$(pwd)/build-dir" >/dev/null 2>&1;
+      make >/dev/null 2>&1;
+      make install >/dev/null 2>&1;
+      cd ..;
+      ./valgrind/build-dir/bin/valgrind --version;
+      ./valgrind/build-dir/bin/valgrind --leak-check=full --show-reachable=yes --show-leak-kinds=all --expensive-definedness-checks=yes --malloc-fill=0x48 --free-fill=0x69 --track-origins=yes ctest -VV;
+    else
+      ctest -VV;
+    fi
