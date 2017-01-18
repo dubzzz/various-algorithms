@@ -3,6 +3,7 @@
 
 #include <algorithm>
 #include <limits>
+#include <numeric>
 #include <random>
 #include <vector>
 
@@ -17,9 +18,8 @@ static_assert(std::numeric_limits<short>::max() == 32767, "short supposed to hav
 
 TEST(TEST_NAME, EmptyArray)
 {
-  constexpr short tab[] = {};
-  constexpr unsigned length = sizeof(tab)/sizeof(tab[0]);
-  ASSERT_FALSE(overflow(tab, length));
+  constexpr short tab[] = {1}; //empty array not possible in Visual Studio
+  ASSERT_FALSE(overflow(tab, 0));
 }
 
 TEST(TEST_NAME, MaxAndOne)
