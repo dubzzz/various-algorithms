@@ -68,7 +68,7 @@ script:
   - make -j4
   - if [ "$VALGRIND" == "ON" ];
     then
-      svn co svn://svn.valgrind.org/valgrind/trunk valgrind;
+      svn co svn://svn.valgrind.org/valgrind/trunk valgrind >/dev/null 2>&1;
       cd valgrind;
       mkdir build-dir;
       ./autogen.sh >/dev/null 2>&1;
