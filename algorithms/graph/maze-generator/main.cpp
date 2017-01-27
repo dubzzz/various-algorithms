@@ -4,7 +4,9 @@
 #include <algorithm>
 #include <iostream>
 #include <numeric>
+#include <set>
 #include <stack>
+#include <utility>
 
 #include "array2d.hpp"
 #include "maze.hpp"
@@ -88,20 +90,20 @@ template <class Fun> void call_if(Point const& pt, Dimension const& dim, Fun&& c
   }
 }
 
-template <class EndCondition> unsigned count_paths_to_end(Dimension const& dim, Point const& start_pt, char** grid, EndCondition&& fun)
+bool has_path_to_end(Dimension const& dim, Point const& start_pt, char** grid)
 {
-  unsigned num_paths {};
+  bool path_to_end {};
   std::stack<Point> toscan;
   toscan.push(start_pt);
-  while (! fun(num_paths) && ! toscan.empty())
+  while (! path_to_end && ! toscan.empty())
   {
     Point pt = toscan.top();
     toscan.pop();
     
-    auto append_point = [&num_paths, &toscan, grid=grid](Point const& pt) {
+    auto append_point = [&path_to_end, &toscan, grid=grid](Point const& pt) {
         if (grid[pt.y][pt.x] == to_char(MazeElement::End))
         {
-          ++num_paths;
+          path_to_end = true;
         }
         else if (grid[pt.y][pt.x] == to_char(MazeElement::Road))
         {
@@ -114,7 +116,7 @@ template <class EndCondition> unsigned count_paths_to_end(Dimension const& dim, 
     call_if(Point{pt.x, pt.y-1}, dim, append_point);
     call_if(Point{pt.x, pt.y+1}, dim, append_point);
   }
-  return num_paths;
+  return path_to_end;
 }
 
 RC_GTEST_PROP(TEST_NAME, AtLeastOnePathFromStartToEnd, (unsigned seed))
@@ -127,7 +129,7 @@ RC_GTEST_PROP(TEST_NAME, AtLeastOnePathFromStartToEnd, (unsigned seed))
   Array2D array2d(dim);
   generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
 
-  RC_ASSERT(count_paths_to_end(dim, start_pt, array2d.data(), [](unsigned num) { return !!num; }) > unsigned());
+  RC_ASSERT(has_path_to_end(dim, start_pt, array2d.data()));
 }
 
 RC_GTEST_PROP(TEST_NAME, ExactlyOnePathFromStartToEnd, (unsigned seed))
@@ -139,8 +141,43 @@ RC_GTEST_PROP(TEST_NAME, ExactlyOnePathFromStartToEnd, (unsigned seed))
 
   Array2D array2d(dim);
   generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
-
-  RC_ASSERT(count_paths_to_end(dim, start_pt, array2d.data(), [](unsigned) { return false; }) == unsigned(1));
+  
+  unsigned** nums = new unsigned*[dim.height]; // num paths starting at start and reaching this cell
+  std::generate(nums, std::next(nums, dim.height)
+      , [width=dim.width](){
+        unsigned* line = new unsigned[width];
+        std::fill(line, std::next(line, width), 0);
+        return line;
+  });
+  
+  std::stack<std::pair<Point, std::set<Point>>> toscan;
+  toscan.emplace(start_pt, std::set<Point>{});
+  while (! toscan.empty())
+  {
+    auto current = std::move(toscan.top());
+    current.second.insert(current.first);
+    toscan.pop();
+    
+    Point const& pt = current.first;
+    std::set<Point> const& visited = current.second;
+  
+    ++nums[pt.y][pt.x];
+    
+    auto append_point = [&visited, &toscan, grid=array2d.data()](Point const& pt) {
+        if (grid[pt.y][pt.x] != to_char(MazeElement::Wall) && visited.find(pt) == visited.end())
+        {
+          toscan.emplace(pt, visited);
+        }
+    };
+    call_if(Point{pt.x-1, pt.y}, dim, append_point);
+    call_if(Point{pt.x+1, pt.y}, dim, append_point);
+    call_if(Point{pt.x, pt.y-1}, dim, append_point);
+    call_if(Point{pt.x, pt.y+1}, dim, append_point);
+  }
+  RC_ASSERT(nums[end_pt.y][end_pt.x] == unsigned(1));
+  
+  std::for_each(nums, std::next(nums, dim.height), [](unsigned* line) { delete[] line; });
+  delete[] nums;
 }
 
 RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, (unsigned seed))

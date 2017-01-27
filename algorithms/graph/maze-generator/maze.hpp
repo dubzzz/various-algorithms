@@ -28,6 +28,7 @@ struct Point
   Point& operator=(Point const&) = default;
   bool operator==(Point const& other) const { return x == other.x && y == other.y; }
   bool operator!=(Point const& other) const { return !(*this == other); }
+  bool operator<(Point const& other) const { return x < other.x || (x == other.x && y < other.y); }
 };
 
 struct Dimension
