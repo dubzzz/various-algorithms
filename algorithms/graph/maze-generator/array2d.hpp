@@ -87,5 +87,18 @@ public:
   
   const_iterator begin() const { return const_iterator::begin(*this); }
   const_iterator end() const   { return const_iterator::end(*this); }
+  
+  template <class Ostream> Ostream& print(Ostream& oss) const
+  {
+    for (std::size_t j {} ; j != _height ; ++j)
+    {
+      for (std::size_t i {} ; i != _width ; ++i)
+      {
+        oss << _data[j][i];
+      }
+      oss << std::endl;
+    }
+    return oss;
+  }
 };
 

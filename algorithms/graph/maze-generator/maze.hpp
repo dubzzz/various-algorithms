@@ -3,7 +3,7 @@
 
 enum class MazeElement { Wall, Road, Start, End, Undefined };
 
-char to_char(MazeElement elt)
+static char to_char(MazeElement elt)
 {
   switch (elt)
   {
@@ -12,17 +12,6 @@ char to_char(MazeElement elt)
     case MazeElement::Start: return 'S';
     case MazeElement::End:   return 'E';
     default:                 return '?';
-  }
-}
-MazeElement to_maze_element(char c)
-{
-  switch (c)
-  {
-    case '#': return MazeElement::Wall;
-    case ' ': return MazeElement::Road;
-    case 'S': return MazeElement::Start;
-    case 'E': return MazeElement::End;
-    default:  return MazeElement::Undefined;
   }
 }
 
