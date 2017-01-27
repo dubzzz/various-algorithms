@@ -94,7 +94,7 @@ public:
     }
     const_iterator operator++(int)
     {
-      const iterator ret = *this;
+      const_iterator ret = *this;
       ++(*this);
       return ret;
     }
