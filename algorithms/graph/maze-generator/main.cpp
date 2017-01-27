@@ -204,7 +204,7 @@ RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, (unsigned seed))
   RC_ASSERT(road_leaving == unsigned(1));
 }
 
-/*RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, (unsigned seed))
+RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   RC_PRE(dim.width >= std::size_t(4)); // in order to fullfill OnlyOneRoadLeavesEnd this property needs larger maze
@@ -238,7 +238,7 @@ RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, (unsigned seed))
       RC_ASSERT(walls_in_block != unsigned(8));
     }
   }
-}*/
+}
 
 RC_GTEST_PROP(TEST_NAME, AllRoadsAreAccessible, (unsigned seed))
 {
