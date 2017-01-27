@@ -7,10 +7,10 @@ static char to_char(MazeElement elt)
 {
   switch (elt)
   {
-    case MazeElement::Wall:  return '#';
+    case MazeElement::Wall:  return char(219);
     case MazeElement::Road:  return ' ';
-    case MazeElement::Start: return 'S';
-    case MazeElement::End:   return 'E';
+    case MazeElement::Start: return 'I';
+    case MazeElement::End:   return 'O';
     default:                 return '?';
   }
 }
