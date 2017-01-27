@@ -86,6 +86,11 @@ template <class RandGen> bool generate_maze_helper(char** maze, Dimension const&
 
 bool removed_enough_walls(char** maze, Dimension const& dim)
 {
+  if (dim.width < 4 || dim.height < 4)
+  {
+    return true;
+  }
+  
   auto call_if = [](Point const& pt, Dimension const& dim, auto&& fun) {
       if (pt.x < dim.width && pt.y < dim.height) { fun(pt); }
   };
