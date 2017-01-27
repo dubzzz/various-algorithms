@@ -7,11 +7,10 @@
 
 // Algorithm to be tested
 
-void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, unsigned seed)
+template <class RandGen> bool generate_maze_helper(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, RandGen& g)
 {
   auto const& width = dim.width;
   auto const& height = dim.height;
-  std::mt19937 g(seed);
   
   // Reset the map
   for (std::size_t j {} ; j != height ; ++j)
@@ -82,5 +81,14 @@ void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Poi
     maze[last.y][last.x] = to_char(MazeElement::Road);
     append_neighboors(last);
   }
+  return reached_end;
+}
+
+void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, unsigned seed)
+{
+  std::mt19937 g(seed);
+  
+  bool correct {};
+  while (! correct) { correct = generate_maze_helper(maze, dim, start_pt, end_pt, g); }
 }
 
