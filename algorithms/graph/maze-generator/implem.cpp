@@ -84,11 +84,47 @@ template <class RandGen> bool generate_maze_helper(char** maze, Dimension const&
   return reached_end;
 }
 
+bool removed_enough_walls(char** maze, Dimension const& dim)
+{
+  auto call_if = [](Point const& pt, Dimension const& dim, auto&& fun) {
+      if (pt.x < dim.width && pt.y < dim.height) { fun(pt); }
+  };
+  
+  for (std::size_t j {} ; j != dim.height ; ++j)
+  {
+    for (std::size_t i {} ; i != dim.width ; ++i)
+    {
+      if (maze[j][i] != to_char(MazeElement::Wall)) continue;
+      
+      unsigned walls_in_block {};
+      auto count_walls_in_block = [&walls_in_block, maze](Point const& pt) { if (maze[pt.y][pt.x] == to_char(MazeElement::Wall)) ++walls_in_block; };
+      
+      call_if(Point{i-1,j-1}, dim, count_walls_in_block);
+      call_if(Point{i-1,  j}, dim, count_walls_in_block);
+      call_if(Point{i-1,j+1}, dim, count_walls_in_block);
+      call_if(Point{i  ,j-1}, dim, count_walls_in_block);
+      call_if(Point{i  ,j+1}, dim, count_walls_in_block);
+      call_if(Point{i+1,j-1}, dim, count_walls_in_block);
+      call_if(Point{i+1,  j}, dim, count_walls_in_block);
+      call_if(Point{i+1,j+1}, dim, count_walls_in_block);
+      
+      if (walls_in_block == 8)
+      {
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, unsigned seed)
 {
   std::mt19937 g(seed);
   
   bool correct {};
-  while (! correct) { correct = generate_maze_helper(maze, dim, start_pt, end_pt, g); }
+  while (! correct)
+  {
+    correct = generate_maze_helper(maze, dim, start_pt, end_pt, g) && removed_enough_walls(maze, dim);
+  }
 }
 
