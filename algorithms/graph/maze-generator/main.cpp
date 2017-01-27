@@ -33,7 +33,7 @@ auto random_point(Dimension const& dim)
       , rc::gen::inRange(std::size_t(), dim.width), rc::gen::inRange(std::size_t(), dim.height));
 }
 
-RC_GTEST_PROP(TEST_NAME, UniqueStart, ())
+RC_GTEST_PROP(TEST_NAME, UniqueStart, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -41,13 +41,13 @@ RC_GTEST_PROP(TEST_NAME, UniqueStart, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
   
   RC_ASSERT(array2d.data()[start_pt.y][start_pt.x] == to_char(MazeElement::Start));
   RC_ASSERT(std::count(array2d.begin(), array2d.end(), to_char(MazeElement::Start)) == std::ptrdiff_t(1));
 }
 
-RC_GTEST_PROP(TEST_NAME, UniqueEnd, ())
+RC_GTEST_PROP(TEST_NAME, UniqueEnd, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -55,13 +55,13 @@ RC_GTEST_PROP(TEST_NAME, UniqueEnd, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
   
   RC_ASSERT(array2d.data()[end_pt.y][end_pt.x] == to_char(MazeElement::End));
   RC_ASSERT(std::count(array2d.begin(), array2d.end(), to_char(MazeElement::End)) == std::ptrdiff_t(1));
 }
 
-RC_GTEST_PROP(TEST_NAME, OnlyMazeElements, ())
+RC_GTEST_PROP(TEST_NAME, OnlyMazeElements, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -69,7 +69,7 @@ RC_GTEST_PROP(TEST_NAME, OnlyMazeElements, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
   
   RC_ASSERT(std::find_if_not(
       array2d.begin(), array2d.end()
@@ -113,7 +113,7 @@ template <class EndCondition> unsigned count_paths_to_end(Dimension const& dim, 
   return num_paths;
 }
 
-RC_GTEST_PROP(TEST_NAME, AtLeastOnePathFromStartToEnd, ())
+RC_GTEST_PROP(TEST_NAME, AtLeastOnePathFromStartToEnd, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -121,12 +121,12 @@ RC_GTEST_PROP(TEST_NAME, AtLeastOnePathFromStartToEnd, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
 
   RC_ASSERT(count_paths_to_end(dim, start_pt, array2d.data(), [](unsigned num) { return !!num; }) > unsigned());
 }
 
-RC_GTEST_PROP(TEST_NAME, ExactlyOnePathFromStartToEnd, ())
+RC_GTEST_PROP(TEST_NAME, ExactlyOnePathFromStartToEnd, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -134,12 +134,12 @@ RC_GTEST_PROP(TEST_NAME, ExactlyOnePathFromStartToEnd, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
 
   RC_ASSERT(count_paths_to_end(dim, start_pt, array2d.data(), [](unsigned) { return false; }) == unsigned(1));
 }
 
-RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, ())
+RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -147,7 +147,7 @@ RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
 
   unsigned road_leaving {};
   auto count_roads = [&road_leaving, grid=array2d.data()](Point const& pt) { if (grid[pt.y][pt.x] == to_char(MazeElement::Road)) ++road_leaving; };
@@ -163,7 +163,7 @@ RC_GTEST_PROP(TEST_NAME, OnlyOneRoadLeavesEnd, ())
   RC_ASSERT(road_leaving == unsigned(1));
 }
 
-RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, ())
+RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   RC_PRE(dim.width >= std::size_t(4)); // in order to fullfill OnlyOneRoadLeavesEnd this property needs larger maze
@@ -174,7 +174,7 @@ RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
   
   for (std::size_t j {} ; j != dim.height ; ++j)
   {
@@ -199,7 +199,7 @@ RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, ())
   }
 }
 
-RC_GTEST_PROP(TEST_NAME, AllRoadsAreAccessible, ())
+RC_GTEST_PROP(TEST_NAME, AllRoadsAreAccessible, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
   auto start_pt = *random_point(dim);
@@ -207,7 +207,7 @@ RC_GTEST_PROP(TEST_NAME, AllRoadsAreAccessible, ())
   RC_PRE(start_pt != end_pt);
 
   Array2D array2d(dim);
-  generate_maze(array2d.data(), dim, start_pt, end_pt);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
   
   std::stack<Point> toscan;
   toscan.push(start_pt);

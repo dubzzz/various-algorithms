@@ -13,5 +13,5 @@
 
 // Algorithm to be tested
 
-void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt);
+void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, unsigned seed);
 
