@@ -24,8 +24,8 @@ public:
   ~Array2D()
   {
     std::for_each(_data, std::next(_data, _height)
-        , [](char* line) { delete line; });
-    delete _data;
+        , [](char* line) { delete[] line; });
+    delete[] _data;
   }
   
   class const_iterator : public std::iterator<std::forward_iterator_tag, char>
