@@ -20,35 +20,35 @@ struct RcAssert
 
 // Running tests
 
-TEST(ALGO, NoTower)
+TEST(TEST_NAME, NoTower)
 {
   HanoiTower<GAssert> tower(0);
   hanoi(tower);
   tower.assert_done();
 }
 
-TEST(ALGO, OneDisk)
+TEST(TEST_NAME, OneDisk)
 {
   HanoiTower<GAssert> tower(1);
   hanoi(tower);
   tower.assert_done();
 }
 
-TEST(ALGO, TwoDisks)
+TEST(TEST_NAME, TwoDisks)
 {
   HanoiTower<GAssert> tower(2);
   hanoi(tower);
   tower.assert_done();
 }
 
-TEST(ALGO, FiveDisks)
+TEST(TEST_NAME, FiveDisks)
 {
   HanoiTower<GAssert> tower(5);
   hanoi(tower);
   tower.assert_done();
 }
 
-RC_GTEST_PROP(ALGO, RandomNumberOfDisks, ())
+RC_GTEST_PROP(TEST_NAME, RandomNumberOfDisks, ())
 {
   unsigned short height = *rc::gen::inRange(0, 20);
   HanoiTower<RcAssert> tower(height);
