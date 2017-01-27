@@ -240,6 +240,34 @@ RC_GTEST_PROP(TEST_NAME, NotTooManyWalls, (unsigned seed))
   }
 }
 
+RC_GTEST_PROP(TEST_NAME, NotTooManyPaths, (unsigned seed))
+{
+  auto dim = *rc::gen::arbitrary<Dimension>();
+  auto start_pt = *random_point(dim);
+  auto end_pt = *random_point(dim);
+  RC_PRE(start_pt != end_pt);
+
+  Array2D array2d(dim);
+  generate_maze(array2d.data(), dim, start_pt, end_pt, seed);
+  
+  for (std::size_t j {} ; j != dim.height ; ++j)
+  {
+    for (std::size_t i {} ; i != dim.width ; ++i)
+    {
+      if (array2d.data()[j][i] == to_char(MazeElement::Wall)) continue;
+      
+      unsigned paths_in_block {};
+      auto count_paths_in_block = [&paths_in_block, grid=array2d.data()](Point const& pt) { if (grid[pt.y][pt.x] != to_char(MazeElement::Wall)) ++paths_in_block; };
+      
+      call_if(Point{i  ,j+1}, dim, count_paths_in_block);
+      call_if(Point{i+1,  j}, dim, count_paths_in_block);
+      call_if(Point{i+1,j+1}, dim, count_paths_in_block);
+      
+      RC_ASSERT(paths_in_block != unsigned(3));
+    }
+  }
+}
+
 RC_GTEST_PROP(TEST_NAME, AllRoadsAreAccessible, (unsigned seed))
 {
   auto dim = *rc::gen::arbitrary<Dimension>();
