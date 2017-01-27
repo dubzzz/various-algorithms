@@ -9,7 +9,6 @@
 #include "maze.hpp"
 #include SPECIFIC_HEADER
 
-void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt);
 // Running tests
 
 constexpr std::size_t max_dim { 250 };
