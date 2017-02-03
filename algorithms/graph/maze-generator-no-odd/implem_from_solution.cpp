@@ -103,8 +103,12 @@ void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Poi
   };
   
   std::vector<std::pair<Point, std::vector<Delta>>> path_to_end;
+  
+  // 1. build a solution
+
   auto current = Point{ start_pt };
   auto choices = build_choices(maze, dim, current, is_inside_wall);
+  std::shuffle(choices.begin(), choices.end(), g);
   while (current != end_pt)
   {
     if (choices.empty())
@@ -120,10 +124,8 @@ void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Poi
       continue;
     }
     
-    std::uniform_int_distribution<std::size_t> dist(0, choices.size()-1);
-    std::size_t selected_idx { dist(g) };
-    Delta d { choices[selected_idx] };
-    choices.erase(choices.begin() + selected_idx);
+    Delta d { choices.back() };
+    choices.pop_back();
 
     // check if such path can lead to the end of the maze
     maze[current.y][current.x] = to_char(MazeElement::Road);
@@ -144,10 +146,71 @@ void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Poi
     // next position
     current = Point{ current.x + d.x, current.y + d.y };
     choices = build_choices(maze, dim, current, is_inside_wall);
+    std::shuffle(choices.begin(), choices.end(), g);
   }
   
   // Put start and end
   maze[start_pt.y][start_pt.x] = to_char(MazeElement::Start);
   maze[end_pt.y][end_pt.x] = to_char(MazeElement::End);
+
+  // 2. derive wrong paths from solution
+
+  path_to_end.erase(
+      std::remove_if(path_to_end.begin(), path_to_end.end(), [](auto&& details) { return details.first.x % 2 != 0 || details.first.y % 2 != 0; })
+      , path_to_end.end());
+  std::transform(path_to_end.begin(), path_to_end.end()
+      , path_to_end.begin()
+      , [&g,maze,&dim,&build_choices](auto&& details) {
+          auto&& choices = build_choices(maze, dim, details.first, is_inside_wall);
+          std::shuffle(choices.begin(), choices.end(), g);
+          return std::make_pair(details.first, choices);
+        });
+  path_to_end.erase(
+      std::remove_if(path_to_end.begin(), path_to_end.end(), [](auto&& details) { return details.second.empty(); })
+      , path_to_end.end());
+  std::shuffle(path_to_end.begin(), path_to_end.end(), g);
+
+  while (! path_to_end.empty())
+  {
+    auto const& pt { path_to_end.back().first };
+    auto& choices { path_to_end.back().second };
+    if (choices.empty())
+    {// no path is accessible from this road
+      // update possible choices of each road
+      std::for_each(path_to_end.begin(), path_to_end.end()
+          , [maze,&dim](auto&& details) {
+            details.second.erase(
+              std::remove_if(details.second.begin(), details.second.end()
+                , [pt=details.first,maze,&dim](auto d) { return ! is_inside_wall(maze, dim, Point{ pt.x + 2 * d.x, pt.y + 2 * d.y }); })
+              , details.second.end());
+          });
+      // remove roads not having choices
+      path_to_end.erase(
+          std::remove_if(path_to_end.begin(), path_to_end.end(), [](auto&& details) { return details.second.empty(); })
+          , path_to_end.end());
+      // shuffle remaining roads
+      std::shuffle(path_to_end.begin(), path_to_end.end(), g);
+      continue;
+    }
+
+    auto d = choices.back();
+    choices.pop_back();
+    auto target = Point{ pt.x + 2 * d.x, pt.y + 2 * d.y };
+    if (! is_inside_wall(maze, dim, target))
+    {// this is not a possible path
+      continue;
+    }
+
+    auto junction = Point{ pt.x + d.x, pt.y + d.y };
+    maze[junction.y][junction.x] = to_char(MazeElement::Road);
+    maze[target.y][target.x] = to_char(MazeElement::Road);
+
+    auto next_choices = build_choices(maze, dim, target, is_inside_wall);
+    std::shuffle(next_choices.begin(), next_choices.end(), g);
+    if (! next_choices.empty())
+    {
+      path_to_end.emplace_back(target, std::move(next_choices));
+    }    
+  }
 }
 
