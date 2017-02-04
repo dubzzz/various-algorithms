@@ -47,7 +47,6 @@ struct UndoCanReach
 static bool can_reach_end(char** maze, Dimension const& dim, Point const& origin, Point const& end)
 {
   const char visited { to_char(MazeElement::Undefined) };
-  const char wall { to_char(MazeElement::Wall) };
   UndoCanReach undoMe { maze, dim };
 
   std::stack<Point> can_be_visited;
