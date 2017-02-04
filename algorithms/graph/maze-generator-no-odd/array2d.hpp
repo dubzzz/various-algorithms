@@ -1,7 +1,9 @@
 #pragma once
 #include <algorithm>
 #include <cstddef>
+#include <iomanip>
 #include <iterator>
+#include <string>
 
 #include "maze.hpp"
 
@@ -90,14 +92,16 @@ public:
   
   template <class Ostream> Ostream& print(Ostream& oss) const
   {
+    const char prev { oss.fill(to_char(MazeElement::Wall)) };
+
+    std::cout << std::setw(_width+2) << "" << std::endl;
     for (std::size_t j {} ; j != _height ; ++j)
     {
-      for (std::size_t i {} ; i != _width ; ++i)
-      {
-        oss << _data[j][i];
-      }
-      oss << std::endl;
+      oss << to_char(MazeElement::Wall) << std::string(_data[j], _width) << to_char(MazeElement::Wall) << std::endl;
     }
+    std::cout << std::setw(_width+2) << "" << std::endl;
+
+    oss.fill(prev);
     return oss;
   }
 };
