@@ -189,8 +189,8 @@ static void generate_trap_paths(char** maze, Dimension const& dim, std::vector<s
   const char road = to_char(MazeElement::Road);
   while (! nonfull_crossroads.empty())
   {
-    auto const& pt { nonfull_crossroads.back().first };
-    auto& choices { nonfull_crossroads.back().second };
+    auto const& pt = nonfull_crossroads.back().first;
+    auto& choices = nonfull_crossroads.back().second;
 
     auto valid_delta = std::find_if(choices.begin(), choices.end()
 		, [&](Delta d) { return is_inside_wall(maze, dim, Point{ pt.x + 2 * d.x, pt.y + 2 * d.y }); });
