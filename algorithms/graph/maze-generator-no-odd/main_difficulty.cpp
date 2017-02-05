@@ -228,7 +228,7 @@ int main(int argc, char** argv)
     std::cout << "ERROR: One of the maze dimensions must be greater than 1" << std::endl;
     return 1;
   }
-  if (dim.height % 2 == 0 && dim.width % 2 == 0)
+  if (dim.height % 2 == 0 || dim.width % 2 == 0)
   {
     std::cout << "ERROR: Maze dimensions must be odd numbers" << std::endl;
     return 1;
