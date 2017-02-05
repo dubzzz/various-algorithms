@@ -6,11 +6,18 @@
 #include "aim.hpp"
 #include "maze.hpp"
 
-struct Delta
-{
-  int x, y;
-  Delta(int x, int y) : x(x), y(y) {}
-};
+#if !defined(OVERRIDE_SHUFFLE)
+  struct Delta
+  {
+    int x, y;
+    Delta(int x, int y) : x(x), y(y) {}
+  };
+  template <class Gen>
+  static void custom_shuffle(std::vector<Delta>& choices, Point const& /*start_pt*/, Point const& /*end_pt*/, Point const& /*pt*/, bool /*is_solution*/, Gen& g)
+  {
+    std::shuffle(choices.begin(), choices.end(), g);
+  }
+#endif
 
 struct UnvisitOnDelete
 {
@@ -83,26 +90,26 @@ static void push_if(Container& container, char** maze, Dimension const& dim, Poi
 }
 
 template <class Predicate, class Gen>
-static auto build_choices(char** maze, Dimension const& dim, Point const& pt, Predicate&& predicate, Gen& g)
+static auto build_choices(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, Point const& pt, bool is_solution, Predicate&& predicate, Gen& g)
 {
   std::vector<Delta> choices;
   push_if(choices, maze, dim, pt, Delta{-1, 0}, predicate);
   push_if(choices, maze, dim, pt, Delta{ 1, 0}, predicate);
   push_if(choices, maze, dim, pt, Delta{ 0,-1}, predicate);
   push_if(choices, maze, dim, pt, Delta{ 0, 1}, predicate);
-  std::shuffle(choices.begin(), choices.end(), g);
+  custom_shuffle(choices, start_pt, end_pt, pt, is_solution, g);
   return choices;
 }
 
 template <class Gen>
-static void adapt_for_traps(std::vector<std::pair<Point, std::vector<Delta>>>& main_roads, char** maze, Dimension const& dim, Gen& g)
+static void adapt_for_traps(std::vector<std::pair<Point, std::vector<Delta>>>& main_roads, char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, Gen& g)
 {
   main_roads.erase(
       std::remove_if(main_roads.begin(), main_roads.end(), [](auto&& details) { return details.first.x % 2 != 0 || details.first.y % 2 != 0; })
       , main_roads.end());
   std::transform(main_roads.begin(), main_roads.end()
       , main_roads.begin()
-      , [&](auto&& details) { return std::make_pair(details.first, build_choices(maze, dim, details.first, is_inside_wall, g)); });
+      , [&](auto&& details) { return std::make_pair(details.first, build_choices(maze, dim, start_pt, end_pt, details.first, false, is_inside_wall, g)); });
   main_roads.erase(
       std::remove_if(main_roads.begin(), main_roads.end(), [](auto&& details) { return details.second.empty(); })
       , main_roads.end());
@@ -128,7 +135,7 @@ static auto generate_main_path(char** maze, Dimension const& dim, Point const& s
 
   auto path_to_end = std::vector<std::pair<Point, std::vector<Delta>>>{};
   auto current = Point{ start_pt };
-  auto choices = build_choices(maze, dim, current, is_inside_wall, g);
+  auto choices = build_choices(maze, dim, start_pt, end_pt, current, true, is_inside_wall, g);
 
   while (current != end_pt)
   {
@@ -166,7 +173,7 @@ static auto generate_main_path(char** maze, Dimension const& dim, Point const& s
     
     // next position
     current = Point{ current.x + d.x, current.y + d.y };
-    choices = build_choices(maze, dim, current, is_inside_wall, g);
+    choices = build_choices(maze, dim, start_pt, end_pt, current, true, is_inside_wall, g);
   }
   
   maze[start_pt.y][start_pt.x] = to_char(MazeElement::Start);
@@ -184,7 +191,7 @@ static void clean_not_accessible(char** maze, Dimension const& dim, std::pair<Po
 }
 
 template <class Gen>
-static void generate_trap_paths(char** maze, Dimension const& dim, std::vector<std::pair<Point, std::vector<Delta>>> nonfull_crossroads, Gen& g)
+static void generate_trap_paths(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt, std::vector<std::pair<Point, std::vector<Delta>>> nonfull_crossroads, Gen& g)
 {
   const char road = to_char(MazeElement::Road);
   while (! nonfull_crossroads.empty())
@@ -192,10 +199,10 @@ static void generate_trap_paths(char** maze, Dimension const& dim, std::vector<s
     auto const& pt = nonfull_crossroads.back().first;
     auto& choices = nonfull_crossroads.back().second;
 
-    auto valid_delta = std::find_if(choices.begin(), choices.end()
+    auto valid_delta = std::find_if(choices.rbegin(), choices.rend()
 		, [&](Delta d) { return is_inside_wall(maze, dim, Point{ pt.x + 2 * d.x, pt.y + 2 * d.y }); });
 
-    if (valid_delta == choices.end())
+    if (valid_delta == choices.rend())
     {// no path is accessible from this road
       // update possible choices of each road
       std::for_each(nonfull_crossroads.begin(), nonfull_crossroads.end(), [&](auto&& details) { clean_not_accessible(maze, dim, details); });
@@ -214,7 +221,7 @@ static void generate_trap_paths(char** maze, Dimension const& dim, std::vector<s
     maze[junction.y][junction.x] = road;
     maze[target.y][target.x] = road;
 
-    auto next_choices = build_choices(maze, dim, target, is_inside_wall, g);
+    auto next_choices = build_choices(maze, dim, start_pt, end_pt, target, false, is_inside_wall, g);
     if (! next_choices.empty())
     {
       nonfull_crossroads.emplace_back(target, std::move(next_choices));
@@ -230,6 +237,6 @@ void generate_maze(char** maze, Dimension const& dim, Point const& start_pt, Poi
 
   reset(maze, dim);
   auto main_roads = generate_main_path(maze, dim, start_pt, end_pt, g);
-  adapt_for_traps(main_roads, maze, dim, g);
-  generate_trap_paths(maze, dim, std::move(main_roads), g);
+  adapt_for_traps(main_roads, maze, dim, start_pt, end_pt, g);
+  generate_trap_paths(maze, dim, start_pt, end_pt, std::move(main_roads), g);
 }
