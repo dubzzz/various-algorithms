@@ -178,7 +178,7 @@ static double allpaths_report(char** maze, Dimension const& dim, Point const& st
   std::vector<std::size_t> lengths_from_solution;
   std::transform(paths_from_solution.begin(), paths_from_solution.end(), std::back_inserter(lengths_from_solution), [](auto&& v) { return v.size(); });
   
-  double score = num_paths * mean(lengths_from_solution) / standard_deviation(lengths_from_solution);
+  double score = num_paths * mean(lengths_from_solution) / (std::sqrt(dim.width*dim.height) * standard_deviation(lengths_from_solution));
   std::cout << "All paths: [score: " << score << ']' << std::endl;
   std::cout << "- Length of solution: " << answer.size() << std::endl;
   std::cout << "- Number of paths   : " << num_paths << std::endl;
