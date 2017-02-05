@@ -153,6 +153,10 @@ template <class Container> static double variance(Container ctn)
   std::transform(ctn.begin(), ctn.end(), ctn.begin(), [](auto v) { return v * v; });
   return mean(ctn);
 }
+template <class Container> static double standard_deviation(Container const& ctn)
+{
+  return std::sqrt(variance(ctn));
+}
 
 static double allpaths_report(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt)
 {
@@ -174,20 +178,20 @@ static double allpaths_report(char** maze, Dimension const& dim, Point const& st
   std::vector<std::size_t> lengths_from_solution;
   std::transform(paths_from_solution.begin(), paths_from_solution.end(), std::back_inserter(lengths_from_solution), [](auto&& v) { return v.size(); });
   
-  double score = num_paths * mean(lengths_from_solution) / variance(lengths_from_solution);
+  double score = num_paths * mean(lengths_from_solution) / standard_deviation(lengths_from_solution);
   std::cout << "All paths: [score: " << score << ']' << std::endl;
   std::cout << "- Length of solution: " << answer.size() << std::endl;
   std::cout << "- Number of paths   : " << num_paths << std::endl;
   std::cout << "- From start:" << std::endl;
-  std::cout << "  - Length mean    : " << mean(lengths_from_start) << std::endl;
-  std::cout << "  - Length variance: " << variance(lengths_from_start) << std::endl;
-  std::cout << "  - Lengths        : [";
+  std::cout << "  - Length mean              : " << mean(lengths_from_start) << std::endl;
+  std::cout << "  - Length standard deviation: " << standard_deviation(lengths_from_start) << std::endl;
+  std::cout << "  - Lengths                  : [";
   std::copy(lengths_from_start.begin(), lengths_from_start.end(), std::ostream_iterator<std::size_t>(std::cout, ","));
   std::cout << ']' << std::endl;
   std::cout << "- From solution:" << std::endl;
-  std::cout << "  - Length mean    : " << mean(lengths_from_solution) << std::endl;
-  std::cout << "  - Length variance: " << variance(lengths_from_solution) << std::endl;
-  std::cout << "  - Lengths        : [";
+  std::cout << "  - Length mean              : " << mean(lengths_from_solution) << std::endl;
+  std::cout << "  - Length standard deviation: " << standard_deviation(lengths_from_solution) << std::endl;
+  std::cout << "  - Lengths                  : [";
   std::copy(lengths_from_solution.begin(), lengths_from_solution.end(), std::ostream_iterator<std::size_t>(std::cout, ","));
   std::cout << ']' << std::endl;
   return score;
@@ -201,7 +205,7 @@ static bool starts_with(std::string const& to_check, std::string const& pattern)
 int main(int argc, char** argv)
 {
   std::random_device rd;
-  std::cout << std::setprecision(2);
+  std::cout << std::setprecision(3);
   
   auto dim = Dimension{35,15};
   auto num_gens = unsigned{1};
