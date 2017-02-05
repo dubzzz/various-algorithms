@@ -55,7 +55,6 @@ void apply_if(Point const& pt, Delta const& d, Pred&& predicate, Apply&& apply)
 
 static auto astar_analysis(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt)
 {
-  const char end = to_char(MazeElement::End);
   auto num_tries = std::size_t{};
 
   using item_type = std::pair<Point, std::size_t>;
