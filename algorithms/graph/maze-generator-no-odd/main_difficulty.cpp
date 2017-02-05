@@ -222,6 +222,12 @@ int main(int argc, char** argv)
     else if (starts_with(current, "--height=")) { dim.height = std::stoi(current.substr(9)); }
     else if (starts_with(current, "--width="))  { dim.width = std::stoi(current.substr(8)); }
     else if (starts_with(current, "--num="))    { num_gens = std::stoi(current.substr(6)); }
+    else
+    {
+      std::cout << "Unknown param: " << current << std::endl;
+      std::cout << "Use --help to display help" << std::endl;
+      return 1;
+    }
   }
   if (dim.height == 1 && dim.width == 1)
   {
