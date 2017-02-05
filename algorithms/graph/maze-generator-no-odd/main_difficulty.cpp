@@ -2,8 +2,11 @@
 #include <cmath>
 #include <iomanip>
 #include <iostream>
+#include <iterator>
 #include <queue>
+#include <numeric>
 #include <random>
+#include <stack>
 #include <utility>
 #include <vector>
 
@@ -104,6 +107,92 @@ static double astar_report(char** maze, Dimension const& dim, Point const& start
   return astar_score;
 }
 
+static auto all_paths_analysis(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt)
+{
+  auto all_paths = std::vector<std::vector<Point>>{};
+  auto under_analysis = std::stack<std::vector<Point>>{};
+  under_analysis.emplace(std::vector<Point>{start_pt});
+  while (! under_analysis.empty())
+  {
+    auto path = std::move(under_analysis.top());
+    under_analysis.pop();
+
+    bool has_child {};
+    auto predicate = [&maze, &dim](auto&& pt) { return is_road_extended(maze, dim, pt); };
+    auto apply = [&maze, &path, &has_child, &under_analysis](auto&& pt) {
+      has_child = true;
+      maze[pt.y][pt.x] = to_char(MazeElement::Undefined);
+      auto cloned = path;
+      cloned.push_back(pt);
+      under_analysis.emplace(std::move(cloned));
+    };
+    
+    apply_if(path.back(), Delta{-1, 0}, predicate, apply);
+    apply_if(path.back(), Delta{ 1, 0}, predicate, apply);
+    apply_if(path.back(), Delta{ 0,-1}, predicate, apply);
+    apply_if(path.back(), Delta{ 0, 1}, predicate, apply);
+
+    if (! has_child)
+    {
+      all_paths.push_back(path);
+    }
+  }
+
+  reset_visited(maze, dim, start_pt, end_pt);
+  return all_paths;
+}
+
+template <class Container> static double mean(Container const& ctn)
+{
+  return std::accumulate(ctn.begin(), ctn.end(), 0., [](auto acc, auto val) { return acc + val; }) / ctn.size();
+}
+template <class Container> static double variance(Container ctn)
+{
+  double m = mean(ctn);
+  std::transform(ctn.begin(), ctn.end(), ctn.begin(), [m](auto v) { return v - m; });
+  std::transform(ctn.begin(), ctn.end(), ctn.begin(), [](auto v) { return v * v; });
+  return mean(ctn);
+}
+
+static double allpaths_report(char** maze, Dimension const& dim, Point const& start_pt, Point const& end_pt)
+{
+  auto all_paths = all_paths_analysis(maze, dim, start_pt, end_pt);
+  auto num_paths = all_paths.size();
+
+  auto paths_from_solution = all_paths;
+  auto answer_it = std::find_if(paths_from_solution.begin(), paths_from_solution.end(), [end_pt](auto&& v){ return v.back() == end_pt; });
+  const auto answer = *answer_it;
+  paths_from_solution.erase(answer_it);
+  for (auto& path : paths_from_solution)
+  {
+    auto diff_at = std::mismatch(path.begin(), path.end(), answer.begin(), answer.end());
+    path.erase(path.begin(), diff_at.first);
+  }
+
+  std::vector<std::size_t> lengths_from_start;
+  std::transform(all_paths.begin(), all_paths.end(), std::back_inserter(lengths_from_start), [](auto&& v) { return v.size(); });
+  std::vector<std::size_t> lengths_from_solution;
+  std::transform(paths_from_solution.begin(), paths_from_solution.end(), std::back_inserter(lengths_from_solution), [](auto&& v) { return v.size(); });
+  
+  double score = num_paths * mean(lengths_from_solution) / variance(lengths_from_solution);
+  std::cout << "All paths: [score: " << score << ']' << std::endl;
+  std::cout << "- Length of solution: " << answer.size() << std::endl;
+  std::cout << "- Number of paths   : " << num_paths << std::endl;
+  std::cout << "- From start:" << std::endl;
+  std::cout << "  - Length mean    : " << mean(lengths_from_start) << std::endl;
+  std::cout << "  - Length variance: " << variance(lengths_from_start) << std::endl;
+  std::cout << "  - Lengths        : [";
+  std::copy(lengths_from_start.begin(), lengths_from_start.end(), std::ostream_iterator<std::size_t>(std::cout, ","));
+  std::cout << ']' << std::endl;
+  std::cout << "- From solution:" << std::endl;
+  std::cout << "  - Length mean    : " << mean(lengths_from_solution) << std::endl;
+  std::cout << "  - Length variance: " << variance(lengths_from_solution) << std::endl;
+  std::cout << "  - Lengths        : [";
+  std::copy(lengths_from_solution.begin(), lengths_from_solution.end(), std::ostream_iterator<std::size_t>(std::cout, ","));
+  std::cout << ']' << std::endl;
+  return score;
+}
+
 static bool starts_with(std::string const& to_check, std::string const& pattern)
 {
   return to_check.substr(0, pattern.size()) == pattern;
@@ -145,7 +234,7 @@ int main(int argc, char** argv)
     return 1;
   }
 
-  std::array<double, 1> agg_scores;
+  std::array<double, 2> agg_scores;
   std::fill(agg_scores.begin(), agg_scores.end(), 0.);
 
   for (unsigned num{} ; num != num_gens ; ++num)
@@ -164,10 +253,12 @@ int main(int argc, char** argv)
     std::cout << std::endl;
 
     agg_scores[0] += astar_report(array2d.data(), dim, start_pt, end_pt);
+    agg_scores[1] += allpaths_report(array2d.data(), dim, start_pt, end_pt);
   }
 
   std::cout << std::endl << "---" << std::endl << std::endl;
   std::cout << "Average A* difficulty: " << (agg_scores[0]/num_gens) << std::endl;
+  std::cout << "Average all paths    : " << (agg_scores[1]/num_gens) << std::endl;
   
   return 0;
 }
