@@ -4,34 +4,34 @@
 #include <sstream>
 #include <string>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 // Algorithm to be tested
 
 std::vector<std::string> medal_table(std::vector<std::string> const& results)
 {
-  std::vector<std::vector<std::string>> results_names;
-  std::transform(std::begin(results), std::end(results)
-      , std::back_inserter(results_names)
-      , [](auto const& names) {
-          std::vector<std::string> podium;
-          std::istringstream iss(names);
-          std::copy(std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>(), std::back_inserter(podium));
-          return podium;
-      });
+  constexpr unsigned idxs[] = {0, 1, 2};
+  std::vector<std::pair<std::string, unsigned>> flat_results;
+  for (auto const& podium : results)
+  {
+    std::istringstream iss(podium);
+    std::transform(
+        std::istream_iterator<std::string>(iss), std::istream_iterator<std::string>()
+        , std::begin(idxs)
+        , std::back_inserter(flat_results)
+        , [](auto const& name, auto idx) { return std::make_pair(name, idx); });
+  }
   
   std::map<std::string, std::vector<unsigned>> data;
-  for (auto const& podium : results_names)
+  for (auto const& entry : flat_results)
   {
-    for (std::size_t idx {} ; idx != 3 ; ++idx)
+    auto current = data.find(entry.first);
+    if (current == data.end())
     {
-      auto current = data.find(podium[idx]);
-      if (current == data.end())
-      {
-        current = data.emplace(podium[idx], std::vector<unsigned>{0, 0, 0}).first;
-      }
-      ++current->second[idx];
+      current = data.emplace(entry.first, std::vector<unsigned>{0, 0, 0}).first;
     }
+    ++current->second[entry.second];
   }
   
   std::vector<std::pair<std::string, std::vector<unsigned>>> ranking;
