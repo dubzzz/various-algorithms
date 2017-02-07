@@ -35,9 +35,7 @@ std::vector<std::string> medal_table(std::vector<std::string> const& results)
   }
   
   std::vector<std::pair<std::string, std::vector<unsigned>>> ranking;
-  std::transform(std::begin(data), std::end(data)
-      , std::back_inserter(ranking)
-      , [](auto const& p) { return p; });
+  std::copy(std::begin(data), std::end(data), std::back_inserter(ranking));
   std::sort(std::begin(ranking), std::end(ranking)
       , [](auto const& p1, auto const& p2) {
           return !(p1.second < p2.second || (p1.second == p2.second && p1.first > p2.first));
