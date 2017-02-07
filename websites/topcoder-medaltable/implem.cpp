@@ -1,5 +1,4 @@
 #include <algorithm>
-#include <array>
 #include <iterator>
 #include <map>
 #include <sstream>
@@ -8,47 +7,6 @@
 #include <vector>
 
 // Algorithm to be tested
-
-namespace {
-class Country final
-{
-  std::string name_;
-  std::array<unsigned, 3> medals_;
-
-public:
-  explicit Country(std::string const& name) : name_(name), medals_()
-  {
-    std::fill(std::begin(medals_), std::end(medals_), 0);
-  }
-  Country(Country&& other) : name_(std::move(other.name_)), medals_()
-  {
-    std::copy(std::begin(other.medals_), std::end(other.medals_), std::begin(medals_));
-  }
-  Country(Country const&) = default;
-  Country& operator=(Country&& other)
-  {
-    name_ = std::move(other.name_);
-    std::copy(std::begin(other.medals_), std::end(other.medals_), std::begin(medals_));
-    return *this;
-  }
-  Country& operator=(Country const&) = default;
-  ~Country() = default;
-  bool operator<(Country const& other) const
-  {
-    auto tie1 = std::tie(medals_[0], medals_[1], medals_[2]);
-    auto tie2 = std::tie(other.medals_[0], other.medals_[1], other.medals_[2]);
-    return tie1 < tie2 || (tie1 == tie2 && name_ > other.name_);
-  }
-  std::string to_string() const
-  {
-    std::ostringstream oss;
-    oss << name_ << ' ' << medals_[0] << ' ' << medals_[1] << ' ' << medals_[2];
-    return oss.str();
-  }
-  std::array<unsigned, 3>& medals() { return medals_; }
-  std::array<unsigned, 3> const& medals() const { return medals_; }
-};
-}
 
 std::vector<std::string> medal_table(std::vector<std::string> const& results)
 {
@@ -62,7 +20,7 @@ std::vector<std::string> medal_table(std::vector<std::string> const& results)
           return podium;
       });
   
-  std::map<std::string, Country> data;
+  std::map<std::string, std::vector<unsigned>> data;
   for (auto const& podium : results_names)
   {
     for (std::size_t idx {} ; idx != 3 ; ++idx)
@@ -70,22 +28,29 @@ std::vector<std::string> medal_table(std::vector<std::string> const& results)
       auto current = data.find(podium[idx]);
       if (current == data.end())
       {
-        current = data.emplace(podium[idx], Country{podium[idx]}).first;
+        current = data.emplace(podium[idx], std::vector<unsigned>{0, 0, 0}).first;
       }
-      ++current->second.medals()[idx];
+      ++current->second[idx];
     }
   }
   
-  std::vector<Country> ranking;
+  std::vector<std::pair<std::string, std::vector<unsigned>>> ranking;
   std::transform(std::begin(data), std::end(data)
       , std::back_inserter(ranking)
-      , [](auto const& p) { return std::move(p.second); });
-  std::sort(std::begin(ranking), std::end(ranking), [](auto const& c1, auto const& c2) { return !(c1 < c2); });
+      , [](auto const& p) { return p; });
+  std::sort(std::begin(ranking), std::end(ranking)
+      , [](auto const& p1, auto const& p2) {
+          return !(p1.second < p2.second || (p1.second == p2.second && p1.first > p2.first));
+      });
   
   std::vector<std::string> out;
   std::transform(std::begin(ranking), std::end(ranking)
       , std::back_inserter(out)
-      , [](auto const& country) { return country.to_string(); });
+      , [](auto const& p) {
+          std::ostringstream oss;
+          oss << p.first << ' ' << p.second[0] << ' ' << p.second[1] << ' ' << p.second[2];
+          return oss.str();
+      });
   return out;
 }
 
