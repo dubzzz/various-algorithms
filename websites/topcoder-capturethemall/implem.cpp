@@ -9,7 +9,7 @@
 using Position = std::pair<int,int>;
 unsigned num_moves(Position const& start, Position const& end)
 {
-  bool visited[8][8] = { 0 };
+  bool visited[8][8];
   std::for_each(visited, visited+8, [](auto line) { std::fill(line, line+8, false); });
   
   std::queue<std::pair<int, Position>> nexts;
