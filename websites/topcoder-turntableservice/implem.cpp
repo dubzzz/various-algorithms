@@ -80,6 +80,11 @@ int calculate_time(std::vector<std::string> const& raw_favorites)
       return current.time();
     }
     
+    if (! already_seen.insert(std::make_pair(current.getRotation(), current.getServed())).second)
+    {
+      continue; //this kind of configuration has already been analyzed
+    }
+    
     std::vector<std::size_t> can_be_served;
     for (std::size_t idx {} ; idx != favorites.size() ; ++idx)
     {
@@ -90,20 +95,12 @@ int calculate_time(std::vector<std::string> const& raw_favorites)
     }
     if (! can_be_served.empty())
     {
-      State toadd = current.serve(can_be_served);
-      if (already_seen.insert(std::make_pair(toadd.getRotation(), toadd.getServed())).second)
-      {
-        nexts.emplace(std::move(toadd));
-      }
+      nexts.emplace(current.serve(can_be_served));
     }
     
     for (std::size_t idx {1} ; idx != favorites.size() ; ++idx)
     {
-      State toadd = current.rotate(idx);
-      if (already_seen.insert(std::make_pair(toadd.getRotation(), toadd.getServed())).second)
-      {
-        nexts.emplace(std::move(toadd));
-      }
+      nexts.emplace(current.rotate(idx));
     }
   }
   return -1;
