@@ -1,7 +1,6 @@
 /*
   The aim of this topic is:
-    TopCoder: 
-https://community.topcoder.com/stat?c=problem_statement&pm=3444&rd=5868
+    TopCoder: https://community.topcoder.com/stat?c=problem_statement&pm=2998&rd=5857
     
   Problem:
     In one mode of the grafix software package, the user blocks off portions of a masking layer using opaque rectangles.
