@@ -45,7 +45,7 @@ public:
   State rotate(std::size_t num) const
   {
     auto cloned_is_served = is_served_;
-    int num_rot = num < cloned_is_served.size()/2 ? num : (int)num-(int)cloned_is_served.size();
+    int num_rot = num <= cloned_is_served.size()/2 ? num : (int)num-(int)cloned_is_served.size();
     return State{time_ +1 +std::abs(num_rot), rotation_ +num_rot, std::move(cloned_is_served)};
   }
   
@@ -77,7 +77,7 @@ int calculate_time(std::vector<std::string> const& raw_favorites)
     
     if (current.dinner_done())
     {
-      return current.time() -1;
+      return current.time();
     }
     
     std::vector<std::size_t> can_be_served;
