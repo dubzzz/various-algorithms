@@ -46,7 +46,7 @@ public:
   {
     auto cloned_is_served = is_served_;
     int num_rot = num <= cloned_is_served.size()/2 ? num : (int)num-(int)cloned_is_served.size();
-    return State{time_ +1 +std::abs(num_rot), rotation_ +num_rot, std::move(cloned_is_served)};
+    return State{time_ +1 +std::abs(num_rot), rotation_ +num, std::move(cloned_is_served)};
   }
   
   int getRotation() const { return rotation_; }
