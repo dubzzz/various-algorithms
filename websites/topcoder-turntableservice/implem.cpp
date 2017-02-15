@@ -20,7 +20,7 @@ class State
   
   State(int time, int rotation, std::vector<bool>&& is_served)
       : time_(time)
-      , rotation_(rotation % is_served.size())
+      , rotation_((rotation + is_served.size()) % is_served.size())
       , num_served_(std::count(is_served.begin(), is_served.end(), true))
       , is_served_(is_served)
   {}
@@ -46,7 +46,7 @@ public:
   {
     auto cloned_is_served = is_served_;
     int num_rot = num <= cloned_is_served.size()/2 ? num : (int)num-(int)cloned_is_served.size();
-    return State{time_ +1 +std::abs(num_rot), rotation_ +num, std::move(cloned_is_served)};
+    return State{time_ +1 +std::abs(num_rot), rotation_ +(int)num, std::move(cloned_is_served)};
   }
   
   int getRotation() const { return rotation_; }
