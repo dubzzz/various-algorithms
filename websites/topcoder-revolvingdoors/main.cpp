@@ -30,7 +30,7 @@ TEST(TEST_NAME, Example1)
       "##|E#",
       " ####"
   };
-  ASSERT_EQ(32, turns(map));
+  ASSERT_EQ(-1, turns(map));
 }
 TEST(TEST_NAME, Example2)
 {

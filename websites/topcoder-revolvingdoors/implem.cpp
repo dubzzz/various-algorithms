@@ -4,6 +4,10 @@
 #include <string>
 #include <vector>
 
+#ifdef DEBUG
+  #include <iostream>
+#endif
+
 #include "aim.hpp"
 
 // Algorithm to be tested
@@ -71,7 +75,7 @@ int turns(std::vector<std::string> const& map_)
   std::set<std::pair<Position, std::vector<bool>>> already_seen;
   
   std::priority_queue<State> nexts;
-  nexts.emplace(0, start_pt, std::move(initial_state));
+  nexts.emplace(0, start_pt, initial_state);
   
   while(! nexts.empty())
   {
@@ -83,6 +87,15 @@ int turns(std::vector<std::string> const& map_)
     
     if (st.pos() == end_pt) { return st.iters(); }
     if (! already_seen.insert(std::make_pair(st.pos(), st.state())).second) { continue; }
+    
+    
+    #ifdef DEBUG
+      std::cout << '{' << st.pos().first << ',' << st.pos().second << '}'
+                << "\tfor " << st.iters()
+                << "\twith door status: ";
+      for (bool b : st.state()) { std::cout << '[' << b << ']'; }
+      std::cout << std::endl;
+    #endif
     
     // move up
     if (st.pos().second >= 1)
@@ -97,7 +110,7 @@ int turns(std::vector<std::string> const& map_)
           {
             auto state = st.state();
             state[state_ids[door]] = false;
-            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first, st.pos().second -1), st.state());
+            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first, st.pos().second -1), state);
           }
           else
           {
@@ -107,8 +120,7 @@ int turns(std::vector<std::string> const& map_)
         }
         case '|':
         {
-          Position door { st.pos().first >= 1 &&  map[st.pos().second -1][st.pos().first -1] == 'O' ? std::make_pair(st.pos().first -1, st.pos().second -1) : std::make_pair(st.pos().first +1, st.pos().second -1) };
-          if (st.state()[state_ids[door]]) //door is opened
+          if (st.state()[state_ids[std::make_pair(st.pos().first, st.pos().second -2)]]) //door is opened
           {
             nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second -1), st.state());
           }
@@ -132,7 +144,7 @@ int turns(std::vector<std::string> const& map_)
           {
             auto state = st.state();
             state[state_ids[door]] = false;
-            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first, st.pos().second +1), st.state());
+            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first, st.pos().second +1), state);
           }
           else
           {
@@ -142,8 +154,7 @@ int turns(std::vector<std::string> const& map_)
         }
         case '|':
         {
-          Position door { st.pos().first >= 1 &&  map[st.pos().second +1][st.pos().first -1] == 'O' ? std::make_pair(st.pos().first -1, st.pos().second +1) : std::make_pair(st.pos().first +1, st.pos().second +1) };
-          if (st.state()[state_ids[door]]) //door is opened
+          if (st.state()[state_ids[std::make_pair(st.pos().first, st.pos().second +2)]]) //door is opened
           {
             nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second +1), st.state());
           }
@@ -162,8 +173,7 @@ int turns(std::vector<std::string> const& map_)
       {
         case '-':
         {
-          Position door { st.pos().second >= 1 &&  map[st.pos().second -1][st.pos().first -1] == 'O' ? std::make_pair(st.pos().first -1, st.pos().second -1) : std::make_pair(st.pos().first -1, st.pos().second +1) };
-          if (! st.state()[state_ids[door]]) //door is opened
+          if (! st.state()[state_ids[std::make_pair(st.pos().first -2, st.pos().second)]]) //door is opened
           {
             nexts.emplace(st.iters(), std::make_pair(st.pos().first -1, st.pos().second), st.state());
           }
@@ -176,7 +186,7 @@ int turns(std::vector<std::string> const& map_)
           {
             auto state = st.state();
             state[state_ids[door]] = true;
-            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first -1, st.pos().second), st.state());
+            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first -1, st.pos().second), state);
           }
           else
           {
@@ -197,8 +207,7 @@ int turns(std::vector<std::string> const& map_)
       {
         case '-':
         {
-          Position door { st.pos().second >= 1 &&  map[st.pos().second -1][st.pos().first +1] == 'O' ? std::make_pair(st.pos().first +1, st.pos().second -1) : std::make_pair(st.pos().first +1, st.pos().second +1) };
-          if (! st.state()[state_ids[door]]) //door is opened
+          if (! st.state()[state_ids[std::make_pair(st.pos().first +2, st.pos().second)]]) //door is opened
           {
             nexts.emplace(st.iters(), std::make_pair(st.pos().first +1, st.pos().second), st.state());
           }
@@ -211,7 +220,7 @@ int turns(std::vector<std::string> const& map_)
           {
             auto state = st.state();
             state[state_ids[door]] = true;
-            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first +1, st.pos().second), st.state());
+            nexts.emplace(st.iters() +1, std::make_pair(st.pos().first +1, st.pos().second), state);
           }
           else
           {
