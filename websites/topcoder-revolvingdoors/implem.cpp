@@ -103,7 +103,8 @@ int turns(std::vector<std::string> const& map_)
         }
         case '|':
           break;
-        default:
+        case ' ':
+        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second -1), st.state());
           break;
       }
@@ -131,7 +132,8 @@ int turns(std::vector<std::string> const& map_)
         }
         case '|':
           break;
-        default:
+        case ' ':
+        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second +1), st.state());
           break;
       }
@@ -159,7 +161,8 @@ int turns(std::vector<std::string> const& map_)
           }
           break;
         }
-        default:
+        case ' ':
+        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first -1, st.pos().second), st.state());
           break;
       }
@@ -187,7 +190,8 @@ int turns(std::vector<std::string> const& map_)
           }
           break;
         }
-        default:
+        case ' ':
+        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first +1, st.pos().second), st.state());
           break;
       }
