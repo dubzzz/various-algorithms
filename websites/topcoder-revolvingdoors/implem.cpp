@@ -33,6 +33,7 @@ int turns(std::vector<std::string> const& map_)
 {
   auto map = map_;
   Position start_pt {};
+  Position end_pt {};
   
   // Scan the map for doors and their status
   
@@ -45,6 +46,7 @@ int turns(std::vector<std::string> const& map_)
       if (map[j][i] != 'O')
       {
         if (map[j][i] == 'S') { start_pt = std::make_pair(i,j); }
+        else if (map[j][i] == 'E') { end_pt = std::make_pair(i,j); }
         continue;
       }
       state_ids.emplace(std::make_pair(i,j), initial_state.size());
@@ -54,6 +56,8 @@ int turns(std::vector<std::string> const& map_)
   
   // Redraw the map next to doors
   
+  map[start_pt.second][start_pt.first] = ' ';
+  map[end_pt.second][end_pt.first] = ' ';
   for (auto const& p : state_ids)
   {
     auto const& pos = p.first;
@@ -77,7 +81,7 @@ int turns(std::vector<std::string> const& map_)
     if (st.pos().second >= map.size()) { continue; }
     if (st.pos().first >= map[0].size()) { continue; }
     
-    if (map[st.pos().second][st.pos().first] == 'E') { return st.iters(); }
+    if (st.pos() == end_pt) { return st.iters(); }
     if (! already_seen.insert(std::make_pair(st.pos(), st.state())).second) { continue; }
     
     // move up
@@ -111,7 +115,6 @@ int turns(std::vector<std::string> const& map_)
           break;
         }
         case ' ':
-        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second -1), st.state());
           break;
       }
@@ -147,7 +150,6 @@ int turns(std::vector<std::string> const& map_)
           break;
         }
         case ' ':
-        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first, st.pos().second +1), st.state());
           break;
       }
@@ -183,7 +185,6 @@ int turns(std::vector<std::string> const& map_)
           break;
         }
         case ' ':
-        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first -1, st.pos().second), st.state());
           break;
       }
@@ -219,7 +220,6 @@ int turns(std::vector<std::string> const& map_)
           break;
         }
         case ' ':
-        case 'E':
           nexts.emplace(st.iters(), std::make_pair(st.pos().first +1, st.pos().second), st.state());
           break;
       }
