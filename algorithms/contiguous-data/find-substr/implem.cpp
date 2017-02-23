@@ -23,6 +23,7 @@ static bool reversed_equals(std::string const& pattern, std::string const& try_s
  
 static TransitionTable make_transition_table(std::string const& pattern)
 {
+  std::size_t identical_at_start = std::distance(pattern.begin(), std::find_if(pattern.begin(), pattern.end(), [s=pattern[0]](auto c){ return s != c;}));
   TransitionTable transition_table;
   for (std::size_t idx {} ; idx != pattern.size() ; ++idx)
   {
@@ -41,7 +42,7 @@ static TransitionTable make_transition_table(std::string const& pattern)
       // - find the longest still matching with the new entry
       // - it can have a maximum of idx chars
 
-      current = (c == pattern[0] ? 1 : 0); // in case there is nothing better
+      current = (c == pattern[0] ? identical_at_start : 0); // in case there is nothing better
       if (idx == 0) { continue; }
 
       std::string try_submatch = pattern.substr(0, idx -1);
