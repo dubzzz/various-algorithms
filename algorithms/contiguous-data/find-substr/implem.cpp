@@ -41,14 +41,14 @@ static TransitionTable make_transition_table(std::string const& pattern)
       // - find the longest still matching with the new entry
       // - it can have a maximum of idx chars
 
-      current = 0; // in case there is nothing better
+      current = (c == pattern[0] ? 1 : 0); // in case there is nothing better
       if (idx == 0) { continue; }
 
       std::string try_submatch = pattern.substr(0, idx -1);
       try_submatch += c;
-      for (std::size_t length {try_submatch.size()} ; length > 0 ; --length)
+      for (std::size_t length {try_submatch.size() -1} ; length > 0 ; --length)
       {
-        if (reversed_equals(pattern, try_submatch, length -1))
+        if (reversed_equals(pattern, try_submatch, length))
         {
           current = length;
           break;
