@@ -44,7 +44,7 @@ static TransitionTable make_transition_table(std::string const& pattern)
       current = 0; // in case there is nothing better
       if (idx == 0) { continue; }
 
-      std::string try_submatch = pattern.substr(0, idx -1);
+      std::string try_submatch = pattern.substr(0, idx);
       try_submatch += c;
       for (std::size_t length {try_submatch.size()} ; length > 0 ; --length)
       {
