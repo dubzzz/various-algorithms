@@ -27,6 +27,14 @@ TEST(TEST_NAME, MatchAtTheEnd)
 {
   ASSERT_EQ(3, find_substr("AZERTY", "RTY"));
 }
+TEST(TEST_NAME, RepeatedFirstChar)
+{
+  ASSERT_EQ(1, find_substr("AAB", "AB"));
+}
+TEST(TEST_NAME, RepeatedFirstChars)
+{
+  ASSERT_EQ(2, find_substr("FEFEFA", "FEFA"));
+}
 TEST(TEST_NAME, CyclicPattern)
 {
   ASSERT_EQ(4, find_substr("ABABABABBABABAB", "ABABB"));
