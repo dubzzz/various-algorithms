@@ -73,6 +73,19 @@ RC_GTEST_PROP(TEST_NAME, FindFirstMatch, ())
   RC_PRE(! s2.empty());
   RC_ASSERT(find_substr(s1+s2+s3, s2) <= s1.size());
 }
+RC_GTEST_PROP(TEST_NAME, IfAnswerItIsBeginningOfMatch, ())
+{
+  auto gen = rc::gen::container<std::string>(rc::gen::inRange('A', (char)('Z' +1)));
+  std::string input = *gen;
+  std::string pattern = *gen;
+  std::size_t pos { find_substr(input, pattern) };
+  bool correct = pos == std::string::npos;
+  if (! correct && pattern.size() + pos <= input.size())
+  {
+    correct = std::mismatch(pattern.begin(), pattern.end(), input.begin() +pos).first == pattern.end();
+  }
+  RC_ASSERT(correct);
+}
 
 int main(int argc, char **argv)
 {
