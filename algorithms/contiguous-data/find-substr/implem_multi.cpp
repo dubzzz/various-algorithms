@@ -22,7 +22,7 @@ std::size_t find_substr(std::string const& raw, std::string const& pattern)
   using RawBits = unsigned long long;
   constexpr std::size_t rawbits_length = 8 * sizeof(RawBits);
   RawBits offset_end_bit = RawBits(1) << (pattern.size() % rawbits_length);
-  std::size_t num_rawbits = 1 + (pattern.size() -1)/rawbits_length;
+  std::size_t num_rawbits = 1 + pattern.size()/rawbits_length;
 
   // build automata changes
 
