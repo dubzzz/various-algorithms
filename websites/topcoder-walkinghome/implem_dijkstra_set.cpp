@@ -95,12 +95,13 @@ int fewest_crossings(std::vector<std::string> const& map)
 {
   const auto start_pt = find_cell(map, 'S');
   const auto end_pt = find_cell(map, 'H');
+  const std::size_t start_idx = to_index(map, start_pt);
+  const std::size_t end_idx = to_index(map, end_pt);
   
   const std::size_t num_vertices { map.size() * map[0].size() };
   std::vector<int> distances(num_vertices, -1);
   std::set<std::pair<int, std::size_t>> tobeanalyzed;
   
-  const std::size_t start_idx = to_index(map, start_pt);
   distances[start_idx] = 0;
   tobeanalyzed.emplace(0, start_idx);
   while (! tobeanalyzed.empty())
@@ -108,18 +109,20 @@ int fewest_crossings(std::vector<std::string> const& map)
     // find the closest point not analyzed yet
     
     std::size_t idx_min { tobeanalyzed.begin()->second };
+    if (idx_min == end_idx) { return tobeanalyzed.begin()->first; }
     auto pt_min = from_index(map, idx_min);
     #ifdef DEBUG
       std::cout << "Analyzing (" << pt_min.first << ", " << pt_min.second << ") at distance " << tobeanalyzed.begin()->first << std::endl;
     #endif
     
     // treat selected point
+    
     tobeanalyzed.erase(tobeanalyzed.begin());
     update_if_allowed(map, tobeanalyzed, distances, pt_min, std::make_pair(pt_min.first -1,    pt_min.second), '-');
     update_if_allowed(map, tobeanalyzed, distances, pt_min, std::make_pair(pt_min.first +1,    pt_min.second), '-');
     update_if_allowed(map, tobeanalyzed, distances, pt_min, std::make_pair(pt_min.first   , pt_min.second -1), '|');
     update_if_allowed(map, tobeanalyzed, distances, pt_min, std::make_pair(pt_min.first   , pt_min.second +1), '|');
   }
-  return distances[to_index(map, end_pt)];
+  return distances[end_idx];
 }
 

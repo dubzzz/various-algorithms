@@ -71,12 +71,14 @@ int fewest_crossings(std::vector<std::string> const& map)
 {
   const auto start_pt = find_cell(map, 'S');
   const auto end_pt = find_cell(map, 'H');
+  const std::size_t start_idx = to_index(map, start_pt);
+  const std::size_t end_idx = to_index(map, end_pt);
   
   const std::size_t num_vertices { map.size() * map[0].size() };
   std::vector<int> distances(num_vertices, -1);
   std::vector<bool> analyzed(num_vertices, false);
   
-  distances[to_index(map, start_pt)] = 0;
+  distances[start_idx] = 0;
   for (std::size_t runid {} ; runid != num_vertices ; ++runid)
   {
     // find the closest point not analyzed yet
@@ -90,6 +92,7 @@ int fewest_crossings(std::vector<std::string> const& map)
         idx_dist = distances[idx];
       }
     }
+    if (idx_min == end_idx) { return idx_dist; }
     auto pt_min = from_index(map, idx_min);
     #ifdef DEBUG
       std::cout << "Analyzing (" << pt_min.first << ", " << pt_min.second << ") at distance " << idx_dist << std::endl;
@@ -104,6 +107,6 @@ int fewest_crossings(std::vector<std::string> const& map)
     update_if_allowed(map, distances, pt_min, std::make_pair(pt_min.first   , pt_min.second -1), '|');
     update_if_allowed(map, distances, pt_min, std::make_pair(pt_min.first   , pt_min.second +1), '|');
   }
-  return distances[to_index(map, end_pt)];
+  return distances[end_idx];
 }
 
