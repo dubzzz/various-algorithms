@@ -69,9 +69,10 @@ script:
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
   - export CXX_STD="c++14"
+  - NUM_PROCS=$(([ -f /proc/cpuinfo ] && cat /proc/cpuinfo | grep processor | wc -l) || echo "4")
   - if [ "$ENABLE_EXTENDED" != "ON" ]; then ENABLE_EXTENDED=OFF; fi
   - cmake "-DENABLE_EXTENDED=${ENABLE_EXTENDED}" .
-  - make -j4
+  - make "-j${NUM_PROCS}"
   - if [ "$VALGRIND" == "ON" ];
     then
       svn co svn://svn.valgrind.org/valgrind/trunk valgrind >/dev/null 2>&1;
