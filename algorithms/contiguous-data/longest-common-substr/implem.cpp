@@ -15,8 +15,11 @@ static std::size_t same_start_upto(std::string const& input1, std::string const&
 
 std::pair<std::size_t, std::pair<std::size_t, std::size_t>> longest_common_substr(std::string const& input1, std::string const& input2)
 {
+  // N = len(input1)
+  // M = len(input2)
+  
   // space complexity: O(1)
-  // time complexity: O(n^3)
+  // time complexity: O(N x M x min(N,M)) ~ O(N^3) for N = M
   
   auto max_length = std::size_t{};
   auto max_pos = std::pair<std::size_t, std::size_t>{};
