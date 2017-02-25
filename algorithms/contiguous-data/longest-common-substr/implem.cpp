@@ -20,9 +20,9 @@ std::pair<std::size_t, std::pair<std::size_t, std::size_t>> longest_common_subst
   
   auto max_length = std::size_t{};
   auto max_pos = std::pair<std::size_t, std::size_t>{};
-  for (std::size_t idx1 {} ; idx1 != input1.size() ; ++idx1)
+  for (std::size_t idx1 {} ; idx1 < input1.size() -max_length ; ++idx1)
   {
-    for (std::size_t idx2 {} ; idx2 != input2.size() ; ++idx2)
+    for (std::size_t idx2 {} ; idx2 < input2.size() -max_length ; ++idx2)
     {
       auto upto = same_start_upto(input1, input2, idx1, idx2);
       if (upto > max_length)
