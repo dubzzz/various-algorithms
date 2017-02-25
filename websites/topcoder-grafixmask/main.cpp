@@ -107,6 +107,7 @@ TEST(TEST_NAME, Example4)
   ASSERT_EQ(expected, sorted_areas(rectangles));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto rectangles = std::vector<std::string>{"0 0 0 0"};
@@ -335,6 +336,7 @@ TEST(TEST_NAME, Extended37)
   auto expected = std::vector<int>{239999};
   ASSERT_EQ(expected, sorted_areas(rectangles));
 }
+#endif
 
 int main(int argc, char **argv)
 {

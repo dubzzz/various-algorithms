@@ -27,6 +27,7 @@ TEST(TEST_NAME, Example4)
   ASSERT_EQ(6, fast_knight("h8", "e2", "d2"));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   ASSERT_EQ(8, fast_knight("a1", "h8", "b2"));
@@ -207,6 +208,7 @@ TEST(TEST_NAME, Extended44)
 {
   ASSERT_EQ(11, fast_knight("a1", "h1", "a8"));
 }
+#endif
 
 int main(int argc, char **argv)
 {

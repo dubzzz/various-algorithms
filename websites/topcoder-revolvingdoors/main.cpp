@@ -98,6 +98,7 @@ TEST(TEST_NAME, Example6)
   ASSERT_EQ(4, turns(map));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto map = std::vector<std::string>{"########", "#    | #", "#S   O #", "#-O- | #", "#E  #  #", "#      #", "########"};
@@ -258,6 +259,7 @@ TEST(TEST_NAME, Extended31)
   auto map = std::vector<std::string>{"S                                                 ", "                                                  ", "                                                  ", "-O--O--O--O--O--O--O--O--O--O-                    ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                  ", "                                                 #", "                                                #E"};
   ASSERT_EQ(-1, turns(map));
 }
+#endif
 
 int main(int argc, char **argv)
 {

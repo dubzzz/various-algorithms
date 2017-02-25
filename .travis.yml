@@ -50,6 +50,7 @@ matrix:
       env:
         - COMPILER_VERSION=3.8
         - VALGRIND=ON
+        - ENABLE_EXTENDED=ON
       addons: *valgrind
 
 install: 
@@ -68,7 +69,8 @@ script:
   - export CC="${CC}-${COMPILER_VERSION}"
   - export CXX="${CXX}-${COMPILER_VERSION}"
   - export CXX_STD="c++14"
-  - cmake .
+  - if [ "$ENABLE_EXTENDED" != "ON" ]; then ENABLE_EXTENDED=OFF; fi
+  - cmake "-DENABLE_EXTENDED=${ENABLE_EXTENDED}" .
   - make -j4
   - if [ "$VALGRIND" == "ON" ];
     then

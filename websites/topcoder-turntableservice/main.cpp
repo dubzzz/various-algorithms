@@ -28,6 +28,7 @@ TEST(TEST_NAME, Example3)
   ASSERT_EQ(35, calculate_time(favorites));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto favorites std::vector<std::string>{"1 2 3", "0 1 2", "0 1", "2 0000000000000000000000000000000000000000000002"};
@@ -523,6 +524,7 @@ TEST(TEST_NAME, Extended98)
   auto favorites std::vector<std::string>{"0 004", "2 3", "0 01", "1 2 3 4", "1 1", "6 3 6", "6 8 9", "11", "13 14", "10 11 12 14", "1 14 13", "2 14", "13 3", "5 7 8", "6"};
   ASSERT_EQ(109, calculate_time(favorites));
 }
+#endif
 
 int main(int argc, char **argv)
 {

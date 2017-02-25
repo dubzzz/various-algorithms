@@ -11,6 +11,8 @@ message(STATUS "CMake version   : " ${CMAKE_SYSTEM_VERSION})
 message(STATUS "Compiler        : " ${CMAKE_CXX_COMPILER})
 message(STATUS "Operating System: " ${CMAKE_SYSTEM})
 
+option (ENABLE_EXTENDED "Enable extended tests" OFF)
+
 set(RAPIDCHECK_PATH rapidcheck)
 set(RAPIDCHECK_INCLUDE_DIRS ${RAPIDCHECK_PATH}/include ${RAPIDCHECK_PATH}/extras/gtest/include)
 add_subdirectory(${RAPIDCHECK_PATH})
@@ -22,6 +24,14 @@ add_subdirectory(${RAPIDCHECK_PATH})
 # - G++:
 #   export CC=/usr/bin/gcc
 #   export CXX=/usr/bin/g++
+
+if (ENABLE_EXTENDED)
+  if (MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /DENABLE_EXTENDED")
+  else()
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DENABLE_EXTENDED")
+  endif()
+endif()
 
 if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=cpp -Wno-error=unknown-pragmas")

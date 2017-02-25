@@ -41,6 +41,7 @@ TEST(TEST_NAME, Example5)
   ASSERT_EQ("fxjqzznvg", business_tasks(data, 9000000));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto data = std::vector<std::string>{"l", "celzw", "vp", "n", "nkmyi", "uaquiikr", "tgu"};
@@ -356,6 +357,7 @@ TEST(TEST_NAME, Extended62)
   auto data = std::vector<std::string>{"a", "b", "c", "d"};
   ASSERT_EQ("b", business_tasks(data, 100999));
 }
+#endif
 
 int main(int argc, char **argv)
 {

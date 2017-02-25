@@ -27,6 +27,7 @@ TEST(TEST_NAME, Example2)
   ASSERT_EQ(expected, medal_table(data));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto data = std::vector<std::string>{"SOL MOZ BOT", "JOR CUB GUA", "TPE MRI BLR", "KEN NRU KSA", "PAK BLR TPE", "MLT CZE BRA", "KAZ TLS NCA", "TLS ECU GBS", "NRU ECU TAN", "ANG PAR CAF", "KGZ KUW PLE", "NRU AZE ANT", "BEL YUG NCA", "CHA KGZ GRE", "PUR CUB KGZ", "PAK THA PUR", "TLS GUA NRU", "KUW GBS ANT", "UGA ARG GBS", "SRI ARG BOT", "ANT MOZ PAK", "SOL EST PUR", "THA GRN RSA", "MLT MRI GBS", "UGA GUY MRI", "KEN CGO KSA", "GBS BOT UGA", "AZE PAK EST", "BOT NGR GRN", "KAZ KUW GUY", "NCA MLT AZE"};
@@ -225,6 +226,7 @@ TEST(TEST_NAME, Extended32)
   auto expected = std::vector<std::string>{"USA 10 0 0", "AUS 1 0 0", "CHN 0 11 0", "AUT 0 0 11"};
   ASSERT_EQ(expected, medal_table(data));
 }
+#endif
 
 int main(int argc, char **argv)
 {

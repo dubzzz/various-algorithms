@@ -98,6 +98,7 @@ TEST(TEST_NAME, Example6)
   ASSERT_EQ(-1, min_presses("zzzz", "aaaa", forbidden));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto forbidden = std::vector<std::string>{"abcdefghijklm abcdefghijklm abcdefghijklm b", "abcdefghijklm abcdefghijklm nopqrstuvwxyz b", "abcdefghijklm nopqrstuvwxyz abcdefghijklm b", "abcdefghijklm nopqrstuvwxyz nopqrstuvwxyz b", "nopqrstuvwxyz abcdefghijklm abcdefghijklm b", "nopqrstuvwxyz abcdefghijklm nopqrstuvwxyz b", "nopqrstuvwxyz nopqrstuvwxyz abcdefghijklm b", "nopqrstuvwxyz nopqrstuvwxyz nopqrstuvwxyz b", "abcdefghijklm abcdefghijklm b abcdefghijklm", "abcdefghijklm abcdefghijklm b nopqrstuvwxyz", "abcdefghijklm nopqrstuvwxyz b abcdefghijklm", "abcdefghijklm nopqrstuvwxyz b nopqrstuvwxyz", "nopqrstuvwxyz abcdefghijklm b abcdefghijklm", "nopqrstuvwxyz abcdefghijklm b nopqrstuvwxyz", "nopqrstuvwxyz nopqrstuvwxyz b abcdefghijklm", "nopqrstuvwxyz nopqrstuvwxyz b nopqrstuvwxyz", "abcdefghijklm b abcdefghijklm abcdefghijklm", "abcdefghijklm b abcdefghijklm nopqrstuvwxyz", "abcdefghijklm b nopqrstuvwxyz abcdefghijklm", "abcdefghijklm b nopqrstuvwxyz nopqrstuvwxyz", "nopqrstuvwxyz b abcdefghijklm abcdefghijklm", "nopqrstuvwxyz b abcdefghijklm nopqrstuvwxyz", "nopqrstuvwxyz b nopqrstuvwxyz abcdefghijklm", "nopqrstuvwxyz b nopqrstuvwxyz nopqrstuvwxyz", "b abcdefghijklm abcdefghijklm abcdefghijklm", "b abcdefghijklm abcdefghijklm nopqrstuvwxyz", "b abcdefghijklm nopqrstuvwxyz abcdefghijklm", "b abcdefghijklm nopqrstuvwxyz nopqrstuvwxyz", "b nopqrstuvwxyz abcdefghijklm abcdefghijklm", "b nopqrstuvwxyz abcdefghijklm nopqrstuvwxyz", "b nopqrstuvwxyz nopqrstuvwxyz abcdefghijklm", "b nopqrstuvwxyz nopqrstuvwxyz nopqrstuvwxyz"};
@@ -278,6 +279,7 @@ TEST(TEST_NAME, Extended35)
   auto forbidden = std::vector<std::string>{};
   ASSERT_EQ(0, min_presses("abcd", "abcd", forbidden));
 }
+#endif
 
 int main(int argc, char **argv)
 {

@@ -24,6 +24,7 @@ TEST(TEST_NAME, Example2)
   ASSERT_EQ(std::make_pair(1, 1), tall_people(data));
 }
 
+#ifdef ENABLE_EXTENDED
 TEST(TEST_NAME, Extended0)
 {
   auto data = std::vector<std::string>{"1 2", "2 1"};
@@ -164,6 +165,7 @@ TEST(TEST_NAME, Extended27)
   auto data = std::vector<std::string>{"10 2", "1000 3"};
   ASSERT_EQ(std::make_pair(3, 3), tall_people(data));
 }
+#endif
 
 int main(int argc, char **argv)
 {
