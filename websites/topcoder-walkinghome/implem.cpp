@@ -65,9 +65,17 @@ static void push_first_time(std::vector<std::string>& map,  std::priority_queue<
       return;
     }
     
-    if (is_road(map, pt) && ! is_road(map, prev))
+    if (is_road(map, pt))
     {
-      ++num_roads;
+      if (is_road(map, prev))
+      {
+        char prev_road { cell_at(map, prev) == '~' ? '-' : '|' };
+        if (prev_road != cell_at(map, pt)) { return; }
+      }
+      else
+      {
+        ++num_roads;
+      }
     }
     nok(map, pt);
     nexts.emplace(num_roads, pt);
