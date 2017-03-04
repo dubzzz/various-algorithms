@@ -50,3 +50,9 @@ Testing
 .vs/
 Debug/
 Release/
+
+# IntelliJ and Java
+
+various-algorithms-java/.idea/*
+various-algorithms-java/target/*
+various-algorithms-java/various-algorithms-java.iml
