@@ -77,7 +77,8 @@ public class CircularQueueFactoryTest {
     @Parameterized.Parameters(name = "{0}")
     public static Collection<Object[]> params() {
         Object[][] ps = {
-                new Object[] { "Singly linked list", CircularQueueFactory.builderCircularQueue() }
+                new Object[] { "Singly linked list", CircularQueueFactory.builderCircularQueue() },
+                new Object[] { "Resizable array", CircularQueueFactory.builderCircularQueueArray() }
         };
         return Arrays.asList(ps);
     }
