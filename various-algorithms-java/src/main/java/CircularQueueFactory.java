@@ -109,6 +109,9 @@ class CircularQueueArrayImpl<Item> implements CircularQueue<Item> {
     public Item dequeue() {
         Item ret = elements[startIdx];
         elements[startIdx++] = null;
+        if (startIdx == elements.length) {
+            startIdx = 0;
+        }
         return ret;
     }
 }
