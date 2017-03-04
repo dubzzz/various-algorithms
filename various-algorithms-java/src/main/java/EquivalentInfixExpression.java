@@ -18,7 +18,7 @@ import java.util.Stack;
  * from Robert Sedgewick and Kevin Wayne
  */
 public class EquivalentInfixExpression {
-    public static String apply(String input) {
+    public static String dijkstraTwoStacks(String input) {
         Stack<String> ops = new Stack<>();
         Stack<String> nums = new Stack<>();
         String[] partialLexems = input.split(" ");
