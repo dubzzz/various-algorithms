@@ -93,6 +93,27 @@ class CircularQueueArrayImpl<Item> implements CircularQueue<Item> {
         }
         elements = newArray;
     }
+    private void decreaseSize(int size) {
+        Item[] newArray = (Item[]) new Object[size];
+        if (startIdx <= endIdx) {
+            for (int idx = startIdx; idx != endIdx; ++idx) {
+                newArray[idx - startIdx] = elements[idx];
+            }
+            endIdx -= startIdx;
+            startIdx = 0;
+        }
+        else {
+            for (int idx = startIdx; idx != elements.length; ++idx) {
+                newArray[idx-startIdx] = elements[idx];
+            }
+            for (int idx = 0; idx != endIdx; ++idx) {
+                newArray[idx + elements.length -startIdx] = elements[idx];
+            }
+            endIdx += elements.length -startIdx;
+            startIdx = 0;
+        }
+        elements = newArray;
+    }
     public boolean empty() {
         return startIdx == endIdx;
     }
@@ -111,6 +132,10 @@ class CircularQueueArrayImpl<Item> implements CircularQueue<Item> {
         elements[startIdx++] = null;
         if (startIdx == elements.length) {
             startIdx = 0;
+        }
+        int currentSize = startIdx <= endIdx ? (endIdx-startIdx) : (elements.length-startIdx + endIdx);
+        if (elements.length > 2 && 2*currentSize < elements.length) {
+            decreaseSize(elements.length/2);
         }
         return ret;
     }
