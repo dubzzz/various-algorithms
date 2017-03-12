@@ -18,7 +18,7 @@ bool is_local_min(std::vector<std::vector<int>> const& matrix, std::size_t i, st
   return (i == 0 || current <= matrix[j][i-1])
       && (j == 0 || current <= matrix[j-1][i])
       && (i == W-1 || current <= matrix[j][i+1])
-      && (j == H-1 || current <= matrix[j][i+1]);
+      && (j == H-1 || current <= matrix[j+1][i]);
 }
 
 bool is_better(std::vector<std::vector<int>> const& matrix, std::size_t nx, std::size_t ny, std::size_t x, std::size_t y)
