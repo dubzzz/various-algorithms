@@ -35,6 +35,11 @@ TEST(TEST_NAME, MultipleSplits)
   auto expected = std::vector<std::string>{"","hello","world","!"};
   ASSERT_EQ(expected, split("*hello*world*!", '*'));
 }
+TEST(TEST_NAME, SplitOnOnlyChar)
+{
+  auto expected = std::vector<std::string>{"","",""};
+  ASSERT_EQ(expected, split("aa", 'a'));
+}
 
 RC_GTEST_PROP(TEST_NAME, BalancedNumberOfCutsLength, (std::string const& in, char delim))
 {

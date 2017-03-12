@@ -32,6 +32,6 @@ std::vector<std::string> split(std::string const& in, char delim)
   std::vector<std::string> out;
   std::istringstream iss(in);
   std::copy(std::istream_iterator<Splitter>(iss), std::istream_iterator<Splitter>(), std::back_inserter(out));
-  for (std::size_t pos {in.size()} ; pos > 0 && in[pos-1] == delim ; --pos) { out.emplace_back(); }
+  for (std::size_t pos {in.size()} ; pos > 1 && in[pos-1] == delim ; --pos) { out.emplace_back(); }
   return out;
 }
