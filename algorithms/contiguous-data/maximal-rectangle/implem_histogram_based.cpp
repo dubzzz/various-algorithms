@@ -52,8 +52,8 @@ std::size_t largest_area(std::vector<std::vector<bool>> const& matrix)
     {
       if (line[idx]) ++histogram[idx];
       else histogram[idx] = 0;
-      max_area = std::max(max_area, largest_in_histogram(histogram));
     }
+    max_area = std::max(max_area, largest_in_histogram(histogram));
   }
   return max_area;
 }
