@@ -7,6 +7,17 @@
 
 std::size_t largest_area(std::vector<std::vector<bool>> const& matrix)
 {
+  // Complexity in average:
+  //  Space: O(M)
+  //  Time : O(N * M^2)
+  // With M = matrix[0].size()
+  //  and N = matrix.size()
+  
+  // This solution is inspired from the resolution 
+  // used by histogram problem
+  // It can be enhanced and based itself upon histogram solution 
+  // in order to decrease its time complexity to O(N * M)
+  
   std::size_t max_area = 0;
   std::vector<std::size_t> last_start(matrix[0].size(), 0);
   for (std::size_t idx {} ; idx != matrix.size() ; ++idx)
